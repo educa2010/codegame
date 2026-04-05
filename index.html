@@ -1,0 +1,2694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="CodeGame — Aprenda programação resolvendo desafios reais. 30 missões, sistema de XP e conquistas.">
+<title>CodeGame — Aprenda Programação Jogando</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   CODEGAME — Design System v3.1 (Production Polish)
+   Tokens → Reset → Ambient → Layout → Components → Animations
+   ═══════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ── Design Tokens ── */
+:root {
+  /* Surface hierarchy */
+  --s-void:    #060910;
+  --s-base:    #0b0f1a;
+  --s-raised:  #0f1523;
+  --s-overlay: #141d2e;
+  --s-float:   #192236;
+  --s-hover:   #1e2a44;
+  --s-editor:  #070a12;
+
+  /* Brand */
+  --cyan:         #00e5ff;
+  --cyan-soft:    #00b8cc;
+  --cyan-dim:     rgba(0,229,255,0.08);
+  --cyan-glow:    rgba(0,229,255,0.22);
+  --cyan-border:  rgba(0,229,255,0.18);
+  --cyan-strong:  rgba(0,229,255,0.40);
+
+  --purple:       #a78bfa;
+  --purple-soft:  #7c5fc4;
+  --purple-glow:  rgba(167,139,250,0.22);
+
+  --green:        #10ffb0;
+  --green-soft:   #0dc98b;
+  --green-glow:   rgba(16,255,176,0.22);
+
+  --red:          #ff4d6d;
+  --red-soft:     #cc3057;
+  --red-glow:     rgba(255,77,109,0.22);
+
+  --yellow:       #fbbf24;
+  --yellow-soft:  #d97706;
+  --yellow-glow:  rgba(251,191,36,0.20);
+
+  --orange:       #f97316;
+
+  /* Text */
+  --tx-1: #edf2f8;
+  --tx-2: #7d8fa3;
+  --tx-3: #3f4f63;
+  --tx-4: #253040;
+  --tx-inv: #060910;
+  --tx-code: #9eb5cc;
+
+  /* Borders */
+  --bd-1: rgba(0,229,255,0.07);
+  --bd-2: rgba(0,229,255,0.15);
+  --bd-3: rgba(0,229,255,0.38);
+
+  /* Shadows */
+  --sh-sm: 0 2px 8px rgba(0,0,0,0.45);
+  --sh-md: 0 4px 20px rgba(0,0,0,0.55);
+  --sh-lg: 0 8px 40px rgba(0,0,0,0.65);
+  --sh-xl: 0 20px 60px rgba(0,0,0,0.75);
+
+  /* Spacing */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px;
+  --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px;
+
+  /* Radius */
+  --r-xs:4px; --r-sm:6px; --r-md:10px; --r-lg:16px; --r-xl:22px; --r-full:9999px;
+
+  /* Layout */
+  --sidebar-w:  288px;
+  --header-h:   58px;
+  --mission-w:  344px;
+  --console-h:  172px;
+
+  /* Typography */
+  --f-ui:   'Inter', system-ui, sans-serif;
+  --f-brand:'Orbitron', sans-serif;
+  --f-code: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Motion */
+  --ease-out:    cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-io:     cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-xs:  100ms;
+  --dur-sm:  160ms;
+  --dur-md:  240ms;
+  --dur-lg:  380ms;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { font-family: var(--f-ui); background: var(--s-void); color: var(--tx-1); min-height: 100vh; overflow-x: hidden; line-height: 1.6; }
+button { font-family: inherit; cursor: pointer; }
+textarea, pre, code { font-family: var(--f-code); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bd-2); border-radius: var(--r-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan-soft); }
+
+/* ── Ambient background ── */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: linear-gradient(var(--bd-1) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--bd-1) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.bg-radial {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,229,255,0.04) 0%, transparent 60%),
+              radial-gradient(ellipse at bottom right, rgba(167,139,250,0.04) 0%, transparent 50%);
+}
+.bg-scanlines {
+  position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.022) 3px, rgba(0,0,0,0.022) 4px);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SPLASH SCREEN
+   ═══════════════════════════════════════════════════════════════ */
+#splash {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--s-void);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--sp-6);
+  transition: opacity 0.5s var(--ease-io), transform 0.5s var(--ease-io);
+}
+
+#splash.is-hiding {
+  opacity: 0;
+  transform: scale(1.04);
+  pointer-events: none;
+}
+
+.splash__glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,229,255,0.08) 0%, transparent 70%);
+}
+
+.splash__logo {
+  display: flex; align-items: center; gap: var(--sp-4);
+  animation: splash-rise 0.7s var(--ease-spring) 0.1s both;
+}
+
+.splash__logo-mark {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  border-radius: var(--r-md);
+  display: grid; place-items: center;
+  font-size: 1.8rem;
+  box-shadow: 0 0 40px var(--cyan-glow), var(--sh-lg);
+  position: relative; overflow: hidden;
+}
+
+.splash__logo-mark::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent);
+}
+
+.splash__wordmark {
+  font-family: var(--f-brand);
+  font-size: 2.4rem; font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+  text-shadow: 0 0 40px var(--cyan-glow);
+  line-height: 1;
+}
+
+.splash__wordmark em { font-style: normal; color: var(--purple); }
+
+.splash__tagline {
+  font-size: 0.95rem; color: var(--tx-2);
+  letter-spacing: 0.06em; font-weight: 400;
+  animation: splash-rise 0.7s var(--ease-spring) 0.25s both;
+  text-align: center;
+}
+
+.splash__stats {
+  display: flex; gap: var(--sp-8);
+  animation: splash-rise 0.7s var(--ease-spring) 0.38s both;
+}
+
+.splash__stat {
+  text-align: center;
+  border: 1px solid var(--bd-2);
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-5);
+  background: rgba(0,229,255,0.03);
+  transition: border-color var(--dur-md) var(--ease-out), background var(--dur-md) var(--ease-out);
+}
+
+.splash__stat:hover {
+  border-color: var(--bd-3);
+  background: var(--cyan-dim);
+}
+
+.splash__stat-value {
+  font-family: var(--f-brand);
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--cyan); display: block;
+}
+
+.splash__stat-label {
+  font-size: 0.68rem; color: var(--tx-3);
+  font-family: var(--f-code); letter-spacing: 0.08em;
+  text-transform: uppercase; margin-top: 2px;
+}
+
+.splash__cta {
+  animation: splash-rise 0.7s var(--ease-spring) 0.5s both;
+}
+
+.splash__btn {
+  display: inline-flex; align-items: center; gap: var(--sp-3);
+  background: linear-gradient(135deg, var(--cyan-soft), var(--purple-soft));
+  color: white; font-family: var(--f-brand);
+  font-size: 0.9rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border: none; border-radius: var(--r-md);
+  padding: 14px 36px;
+  box-shadow: 0 4px 30px var(--cyan-glow);
+  transition: transform var(--dur-sm) var(--ease-spring), box-shadow var(--dur-sm) var(--ease-out);
+  position: relative; overflow: hidden;
+}
+
+.splash__btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+}
+
+.splash__btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 40px var(--cyan-glow); }
+.splash__btn:active { transform: translateY(0) scale(0.99); }
+
+.splash__btn-icon { font-size: 1.2rem; }
+
+.splash__footer {
+  position: absolute; bottom: var(--sp-5);
+  font-size: 0.65rem; color: var(--tx-4);
+  font-family: var(--f-code); letter-spacing: 0.08em;
+  animation: splash-rise 0.7s var(--ease-spring) 0.65s both;
+}
+
+@keyframes splash-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   APP SHELL
+   ═══════════════════════════════════════════════════════════════ */
+#app {
+  display: flex; flex-direction: column;
+  min-height: 100vh; position: relative; z-index: 2;
+  opacity: 0; transition: opacity 0.45s var(--ease-out);
+}
+
+#app.is-ready { opacity: 1; }
+
+/* ── Header ── */
+#header {
+  height: var(--header-h);
+  background: rgba(11,15,26,0.94);
+  border-bottom: 1px solid var(--bd-1);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--sp-6);
+  position: sticky; top: 0; z-index: 200;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  /* subtle bottom glow */
+  box-shadow: 0 1px 0 var(--bd-1), 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* Logo */
+.logo { display: flex; align-items: center; gap: var(--sp-3); user-select: none; }
+
+.logo__mark {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  border-radius: var(--r-sm);
+  display: grid; place-items: center; font-size: 1rem;
+  box-shadow: 0 0 16px var(--cyan-glow);
+  position: relative; overflow: hidden; flex-shrink: 0;
+}
+
+.logo__mark::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+}
+
+.logo__wordmark {
+  font-family: var(--f-brand); font-size: 1.05rem; font-weight: 700;
+  letter-spacing: 0.1em; color: var(--cyan);
+  text-shadow: 0 0 20px var(--cyan-glow); line-height: 1;
+}
+
+.logo__wordmark em { font-style: normal; color: var(--purple); }
+
+.logo__version {
+  font-family: var(--f-code); font-size: 0.52rem;
+  color: var(--tx-4); letter-spacing: 0.12em;
+  align-self: flex-end; padding-bottom: 1px;
+}
+
+/* HUD */
+.hud { display: flex; align-items: center; gap: var(--sp-5); }
+
+.hud__group {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-size: 0.78rem; font-weight: 500; color: var(--tx-2);
+}
+
+.hud__icon { font-size: 0.9rem; }
+
+.hud__value {
+  font-family: var(--f-code); font-weight: 700; font-size: 0.88rem;
+  color: var(--cyan); min-width: 32px;
+  transition: transform var(--dur-sm) var(--ease-spring), color var(--dur-md) var(--ease-out);
+}
+
+.hud__value.is-bumping { animation: bump 0.35s var(--ease-spring); }
+
+@keyframes bump { 0%,100% { transform:scale(1); } 50% { transform:scale(1.45); } }
+
+.hud__sep { width: 1px; height: 18px; background: var(--bd-1); }
+
+.hud__badge {
+  display: flex; align-items: center; gap: var(--sp-2);
+  background: linear-gradient(135deg, var(--cyan-dim), rgba(167,139,250,0.07));
+  border: 1px solid var(--bd-2); border-radius: var(--r-sm);
+  padding: 4px 11px;
+  font-family: var(--f-brand); font-size: 0.66rem;
+  color: var(--cyan); letter-spacing: 0.08em; white-space: nowrap;
+}
+
+.header-right { display: flex; align-items: center; gap: var(--sp-2); }
+
+/* ── Layout ── */
+#main-layout { display: flex; flex: 1; overflow: hidden; min-height: calc(100vh - var(--header-h)); }
+
+/* ── Sidebar toggle (mobile) ── */
+.sidebar-toggle {
+  display: none;
+  background: transparent; border: 1px solid var(--bd-2);
+  color: var(--tx-2); border-radius: var(--r-sm);
+  width: 32px; height: 32px;
+  align-items: center; justify-content: center;
+  font-size: 1rem; transition: all var(--dur-md) var(--ease-out);
+}
+
+.sidebar-toggle:hover { border-color: var(--cyan-border); color: var(--cyan); }
+
+/* ═══════════════════════════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════════════════════════ */
+#sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w);
+  background: rgba(13,18,30,0.88);
+  border-right: 1px solid var(--bd-1);
+  display: flex; flex-direction: column; overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition: transform var(--dur-lg) var(--ease-spring);
+}
+
+/* Player card */
+.player-card {
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
+  border-bottom: 1px solid var(--bd-1);
+  background: linear-gradient(160deg, rgba(0,229,255,0.04) 0%, transparent 65%);
+  flex-shrink: 0;
+}
+
+.player-card__row { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-4); }
+
+/* Player avatar with rotating ring */
+.player-avatar { position: relative; flex-shrink: 0; }
+
+.player-avatar__ring {
+  position: absolute; inset: -3px; border-radius: var(--r-full); z-index: 0;
+  background: conic-gradient(var(--cyan), var(--purple), var(--cyan));
+  animation: spin-ring 9s linear infinite; opacity: 0.65;
+}
+
+.player-avatar__ring-mask {
+  position: absolute; inset: -1px; border-radius: var(--r-full);
+  /* matches sidebar background */
+  background: #0d121e; z-index: 0;
+}
+
+.player-avatar__face {
+  width: 44px; height: 44px; border-radius: var(--r-full);
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  display: grid; place-items: center;
+  font-size: 1.25rem; position: relative; z-index: 1;
+}
+
+@keyframes spin-ring { to { transform: rotate(360deg); } }
+
+.player-info__name {
+  font-family: var(--f-brand); font-size: 0.76rem; font-weight: 700;
+  color: var(--tx-1); letter-spacing: 0.05em; margin-bottom: 2px;
+  cursor: pointer; transition: color var(--dur-sm) var(--ease-out);
+}
+
+.player-info__name:hover { color: var(--cyan); }
+
+.player-info__title {
+  font-family: var(--f-code); font-size: 0.66rem;
+  color: var(--cyan); letter-spacing: 0.04em;
+}
+
+/* XP bar */
+.xp-block__header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: var(--sp-2);
+}
+
+.xp-block__label {
+  font-family: var(--f-code); font-size: 0.6rem; font-weight: 700;
+  color: var(--tx-3); letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+.xp-block__value {
+  font-family: var(--f-code); font-size: 0.66rem; font-weight: 700; color: var(--cyan);
+}
+
+.xp-track {
+  height: 5px; background: rgba(255,255,255,0.05);
+  border-radius: var(--r-full); overflow: hidden;
+}
+
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  border-radius: var(--r-full);
+  transition: width 0.8s var(--ease-spring);
+  position: relative; min-width: 5px; will-change: width;
+}
+
+.xp-fill::after {
+  content: ''; position: absolute;
+  right: -1px; top: 50%; transform: translateY(-50%);
+  width: 7px; height: 7px; background: white;
+  border-radius: var(--r-full); box-shadow: 0 0 6px white; opacity: 0.75;
+}
+
+/* Progress block */
+.progress-block {
+  padding: var(--sp-3) var(--sp-4) var(--sp-1);
+  flex-shrink: 0;
+}
+
+.progress-block__row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-2);
+}
+
+.progress-block__label {
+  font-family: var(--f-code); font-size: 0.58rem; font-weight: 700;
+  color: var(--tx-3); text-transform: uppercase; letter-spacing: 0.12em;
+}
+
+.progress-block__value {
+  font-family: var(--f-code); font-size: 0.64rem; font-weight: 700; color: var(--green);
+}
+
+.progress-track { height: 3px; background: rgba(255,255,255,0.04); border-radius: var(--r-full); overflow: hidden; }
+
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan));
+  border-radius: var(--r-full); transition: width 0.65s var(--ease-out);
+}
+
+/* Sidebar section header */
+.sidebar-section {
+  padding: var(--sp-3) var(--sp-4) var(--sp-1);
+  display: flex; align-items: center; gap: var(--sp-2); flex-shrink: 0;
+}
+
+.sidebar-section__label {
+  font-family: var(--f-code); font-size: 0.58rem; font-weight: 700;
+  color: var(--tx-3); letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap;
+}
+
+.sidebar-section::after { content: ''; flex: 1; height: 1px; background: var(--bd-1); }
+
+/* Challenge list */
+#challenge-list { flex: 1; overflow-y: auto; padding: 0 var(--sp-2) var(--sp-4); }
+
+.challenge-group-label {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-2) var(--sp-1);
+  font-family: var(--f-code); font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--tx-3);
+}
+
+.diff-dot {
+  width: 6px; height: 6px; border-radius: var(--r-full);
+}
+
+.diff-dot--beginner     { background: var(--green);  box-shadow: 0 0 5px var(--green-glow); }
+.diff-dot--intermediate { background: var(--yellow); box-shadow: 0 0 5px var(--yellow-glow); }
+.diff-dot--advanced     { background: var(--red);    box-shadow: 0 0 5px var(--red-glow); }
+
+.challenge-item {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3); border-radius: var(--r-sm);
+  cursor: pointer; margin-bottom: 1px;
+  border: 1px solid transparent;
+  position: relative;
+  transition: background var(--dur-xs) var(--ease-out), border-color var(--dur-xs) var(--ease-out);
+  user-select: none;
+}
+
+.challenge-item:hover { background: var(--s-hover); border-color: var(--bd-1); }
+.challenge-item:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
+
+.challenge-item--active {
+  background: rgba(0,229,255,0.065); border-color: var(--bd-2);
+}
+
+.challenge-item--active::before {
+  content: ''; position: absolute;
+  left: 0; top: 22%; bottom: 22%; width: 2px;
+  background: var(--cyan); border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 6px var(--cyan);
+}
+
+.challenge-item--done .ci-icon { filter: hue-rotate(0deg); }
+.challenge-item--done .ci-title { color: var(--tx-2); }
+
+.ci-icon { font-size: 0.82rem; width: 16px; text-align: center; flex-shrink: 0; }
+.ci-body { flex: 1; min-width: 0; }
+
+.ci-title {
+  font-size: 0.73rem; font-weight: 600; color: var(--tx-1);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  letter-spacing: 0.01em; line-height: 1.4;
+}
+
+.ci-meta { display: flex; align-items: center; gap: var(--sp-2); margin-top: 1px; }
+
+.ci-diff { font-family: var(--f-code); font-size: 0.56rem; color: var(--tx-3); }
+.ci-xp   { font-family: var(--f-code); font-size: 0.56rem; color: var(--cyan-soft); margin-left: auto; opacity: 0.65; }
+
+/* Stats grid */
+.stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  border-top: 1px solid var(--bd-1); flex-shrink: 0;
+}
+
+.stat-tile {
+  background: var(--s-overlay); border: 1px solid var(--bd-1);
+  border-radius: var(--r-sm); padding: var(--sp-2) var(--sp-3);
+  text-align: center;
+  transition: border-color var(--dur-md) var(--ease-out), background var(--dur-md) var(--ease-out);
+}
+
+.stat-tile:hover { border-color: var(--bd-2); background: var(--s-float); }
+
+.stat-tile__value {
+  font-family: var(--f-brand); font-size: 1rem; font-weight: 700;
+  color: var(--cyan); line-height: 1; margin-bottom: 3px;
+}
+
+.stat-tile__label {
+  font-family: var(--f-code); font-size: 0.56rem;
+  color: var(--tx-3); letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTENT
+   ═══════════════════════════════════════════════════════════════ */
+#content { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* Tabs */
+.tabs-bar {
+  display: flex; align-items: center; height: 40px;
+  background: rgba(13,18,30,0.82); border-bottom: 1px solid var(--bd-1);
+  padding: 0 var(--sp-5); gap: 2px;
+  backdrop-filter: blur(8px); flex-shrink: 0;
+}
+
+.tab-btn {
+  position: relative; background: transparent; border: none;
+  height: 40px; padding: 0 var(--sp-4);
+  font-family: var(--f-ui); font-size: 0.78rem; font-weight: 500;
+  color: var(--tx-3); letter-spacing: 0.02em;
+  transition: color var(--dur-md) var(--ease-out);
+  display: flex; align-items: center; gap: var(--sp-2); white-space: nowrap;
+}
+
+.tab-btn:hover { color: var(--tx-2); }
+.tab-btn:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; border-radius: var(--r-xs); }
+
+.tab-btn.is-active { color: var(--cyan); font-weight: 600; }
+
+.tab-btn.is-active::after {
+  content: ''; position: absolute; bottom: 0;
+  left: var(--sp-4); right: var(--sp-4); height: 2px;
+  background: var(--cyan); border-radius: var(--r-full) var(--r-full) 0 0;
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+
+/* Views */
+#main-panel { flex: 1; display: flex; overflow: hidden; }
+.view       { flex: 1; }
+
+#game-view  { display: flex; overflow: hidden; }
+#ranking-view, #achievements-view {
+  display: none; overflow-y: auto; padding: var(--sp-8);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MISSION PANEL
+   ═══════════════════════════════════════════════════════════════ */
+#mission-panel {
+  width: var(--mission-w); min-width: var(--mission-w);
+  background: rgba(10,14,24,0.65);
+  border-right: 1px solid var(--bd-1);
+  overflow-y: auto; padding: var(--sp-5);
+  display: flex; flex-direction: column; gap: var(--sp-4);
+  backdrop-filter: blur(8px);
+}
+
+/* Welcome inside mission panel */
+.welcome-pane {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; gap: var(--sp-5);
+  padding: var(--sp-10) var(--sp-6);
+}
+
+.welcome-pane__icon {
+  font-size: 2.8rem;
+  filter: drop-shadow(0 0 18px var(--cyan));
+  animation: float 3.5s ease-in-out infinite;
+}
+
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+.welcome-pane__title {
+  font-family: var(--f-brand); font-size: 0.94rem; font-weight: 700;
+  color: var(--tx-1); letter-spacing: 0.06em;
+}
+
+.welcome-pane__sub {
+  font-size: 0.8rem; color: var(--tx-2); line-height: 1.65;
+  max-width: 220px;
+}
+
+.welcome-pane__hint {
+  font-family: var(--f-code); font-size: 0.66rem;
+  color: var(--tx-3);
+  display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; justify-content: center;
+}
+
+.kbd {
+  background: var(--s-float); border: 1px solid var(--bd-2);
+  border-radius: var(--r-xs); padding: 2px 6px;
+  font-family: var(--f-code); font-size: 0.62rem; color: var(--tx-2);
+}
+
+/* Mission detail — fade-in animation on load */
+.mission-detail {
+  display: none; flex-direction: column; gap: var(--sp-4);
+  animation: fade-up 0.28s var(--ease-spring);
+}
+
+.mission-detail.is-visible { display: flex; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Mission header */
+.mission-header { display: flex; align-items: flex-start; gap: var(--sp-3); }
+
+.mission-num {
+  width: 34px; height: 34px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--cyan-dim), rgba(167,139,250,0.09));
+  border: 1px solid var(--bd-2); border-radius: var(--r-sm);
+  display: grid; place-items: center;
+  font-family: var(--f-brand); font-size: 0.68rem;
+  font-weight: 700; color: var(--cyan); letter-spacing: 0.05em;
+}
+
+.mission-title-text {
+  font-family: var(--f-brand); font-size: 0.86rem; font-weight: 700;
+  color: var(--tx-1); letter-spacing: 0.03em; line-height: 1.3; margin-bottom: var(--sp-2);
+}
+
+/* Badges */
+.badge-row { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+
+.badge {
+  font-family: var(--f-code); font-size: 0.56rem; font-weight: 700;
+  letter-spacing: 0.06em; padding: 2px 8px;
+  border-radius: var(--r-full); text-transform: uppercase; border: 1px solid;
+}
+
+.badge--beginner     { color: var(--green);  background: rgba(16,255,176,0.07);  border-color: rgba(16,255,176,0.22); }
+.badge--intermediate { color: var(--yellow); background: rgba(251,191,36,0.07);  border-color: rgba(251,191,36,0.22); }
+.badge--advanced     { color: var(--red);    background: rgba(255,77,109,0.07);   border-color: rgba(255,77,109,0.22); }
+.badge--xp           { color: var(--cyan);   background: var(--cyan-dim);         border-color: var(--bd-2); }
+.badge--done         { color: var(--green);  background: rgba(16,255,176,0.07);   border-color: rgba(16,255,176,0.22); }
+
+/* Info card */
+.info-card {
+  background: var(--s-overlay); border: 1px solid var(--bd-1);
+  border-radius: var(--r-md); padding: var(--sp-4);
+  transition: border-color var(--dur-md) var(--ease-out);
+}
+
+.info-card:hover { border-color: var(--bd-2); }
+
+.info-card__heading {
+  font-family: var(--f-code); font-size: 0.58rem; font-weight: 700;
+  color: var(--tx-3); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: var(--sp-2); display: flex; align-items: center; gap: var(--sp-2);
+}
+
+.info-card__body { font-size: 0.8rem; color: var(--tx-2); line-height: 1.7; }
+.info-card__body code {
+  font-family: var(--f-code); background: var(--cyan-dim);
+  color: var(--cyan); padding: 1px 5px; border-radius: var(--r-xs); font-size: 0.8em;
+}
+
+/* Expected output card */
+.expected-card {
+  background: var(--s-editor); border: 1px solid var(--bd-1);
+  border-radius: var(--r-md); overflow: hidden;
+}
+
+.expected-card__bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid var(--bd-1);
+  background: rgba(0,0,0,0.2);
+}
+
+.expected-card__label {
+  font-family: var(--f-code); font-size: 0.58rem; font-weight: 700;
+  color: var(--tx-3); letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.expected-card__body {
+  padding: var(--sp-3) var(--sp-4);
+  font-family: var(--f-code); font-size: 0.74rem;
+  color: var(--green); white-space: pre-wrap; line-height: 1.65;
+  max-height: 96px; overflow-y: auto;
+}
+
+/* Hint panel — FIXED: no overflow:hidden so content shows properly */
+.hint-toggle {
+  width: 100%; background: transparent;
+  border: 1px dashed rgba(251,191,36,0.22);
+  border-radius: var(--r-md); color: var(--yellow);
+  padding: var(--sp-2) var(--sp-4);
+  font-family: var(--f-ui); font-size: 0.76rem; font-weight: 600;
+  transition: background var(--dur-md) var(--ease-out), border-color var(--dur-md) var(--ease-out);
+  letter-spacing: 0.03em;
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+}
+
+.hint-toggle:hover { background: rgba(251,191,36,0.05); border-color: rgba(251,191,36,0.4); border-style: solid; }
+.hint-toggle:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+
+.hint-toggle__chevron { transition: transform var(--dur-md) var(--ease-out); }
+.hint-toggle.is-open .hint-toggle__chevron { transform: rotate(180deg); }
+
+.hint-body {
+  margin-top: var(--sp-2);
+  background: linear-gradient(135deg, rgba(251,191,36,0.04), rgba(249,115,22,0.04));
+  border: 1px solid rgba(251,191,36,0.15);
+  border-radius: var(--r-md); padding: var(--sp-3) var(--sp-4);
+  display: none; /* toggled via JS class */
+}
+
+.hint-body.is-open { display: block; animation: fade-up 0.2s var(--ease-out); }
+
+.hint-body__label {
+  font-family: var(--f-code); font-size: 0.58rem; font-weight: 700;
+  color: var(--yellow); letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+}
+
+.hint-body__text { font-family: var(--f-code); font-size: 0.76rem; color: var(--tx-2); line-height: 1.65; }
+
+/* ═══════════════════════════════════════════════════════════════
+   EDITOR
+   ═══════════════════════════════════════════════════════════════ */
+#editor-area {
+  flex: 1; display: flex; flex-direction: column;
+  background: var(--s-editor); overflow: hidden; min-width: 0;
+}
+
+/* Editor toolbar */
+.editor-bar {
+  height: 40px; background: rgba(9,12,21,0.95);
+  border-bottom: 1px solid var(--bd-1);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--sp-4); flex-shrink: 0;
+}
+
+.editor-bar__left, .editor-bar__right { display: flex; align-items: center; gap: var(--sp-3); }
+
+.file-tab {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-family: var(--f-code); font-size: 0.7rem; color: var(--tx-2);
+  padding: 3px var(--sp-3) 1px;
+  border-bottom: 2px solid var(--cyan);
+}
+
+.file-dot {
+  width: 6px; height: 6px; border-radius: var(--r-full);
+  background: var(--yellow); transition: background var(--dur-md) var(--ease-out);
+}
+
+.file-dot--clean { background: var(--green); }
+
+.shortcut-hint {
+  font-family: var(--f-code); font-size: 0.6rem; color: var(--tx-4);
+  display: flex; align-items: center; gap: var(--sp-1);
+}
+
+/* Editor body */
+.editor-body { flex: 1; display: flex; overflow: hidden; position: relative; }
+
+#line-numbers {
+  padding: var(--sp-4) var(--sp-2) var(--sp-4) var(--sp-3);
+  font-family: var(--f-code); font-size: 0.75rem; line-height: 1.7;
+  color: var(--tx-4); user-select: none; text-align: right;
+  background: transparent; border-right: 1px solid var(--bd-1);
+  flex-shrink: 0; min-width: 46px; overflow: hidden;
+}
+
+#code-editor {
+  flex: 1; background: transparent; border: none; outline: none; resize: none;
+  font-family: var(--f-code); font-size: 0.8rem; line-height: 1.7;
+  color: var(--tx-code); padding: var(--sp-4); tab-size: 2;
+  white-space: pre; overflow: auto;
+  caret-color: var(--cyan); letter-spacing: 0.01em;
+}
+
+#code-editor::selection { background: rgba(0,229,255,0.14); }
+#code-editor:focus { box-shadow: inset 3px 0 0 var(--cyan); }
+#code-editor::placeholder { color: var(--tx-4); font-style: italic; }
+
+/* Console */
+.console {
+  height: var(--console-h);
+  background: rgba(5,8,14,0.96);
+  border-top: 1px solid var(--bd-1);
+  display: flex; flex-direction: column; flex-shrink: 0;
+}
+
+.console__bar {
+  height: 28px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--sp-4); border-bottom: 1px solid var(--bd-1); flex-shrink: 0;
+}
+
+.console__title {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-family: var(--f-code); font-size: 0.62rem; color: var(--tx-3);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.console__dot {
+  width: 6px; height: 6px; border-radius: var(--r-full); background: var(--tx-4);
+  transition: background var(--dur-md), box-shadow var(--dur-md);
+}
+
+.console__dot--running { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); animation: pulse-dot 0.7s ease-in-out infinite; }
+.console__dot--success { background: var(--green);  box-shadow: 0 0 8px var(--green-glow); }
+.console__dot--error   { background: var(--red);    box-shadow: 0 0 8px var(--red-glow); }
+
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.78)} }
+
+.console__clear {
+  background: transparent; border: none;
+  font-family: var(--f-code); font-size: 0.6rem;
+  color: var(--tx-3); letter-spacing: 0.06em;
+  padding: 2px var(--sp-2); border-radius: var(--r-xs);
+  transition: color var(--dur-xs) var(--ease-out);
+}
+
+.console__clear:hover { color: var(--red); }
+
+.console__body {
+  flex: 1; overflow-y: auto;
+  padding: var(--sp-2) var(--sp-4);
+  font-family: var(--f-code); font-size: 0.74rem; line-height: 1.7;
+}
+
+.cline { display: flex; gap: var(--sp-3); align-items: baseline; padding: 1px 0; }
+.cline__pfx { color: var(--tx-3); flex-shrink: 0; font-size: 0.68rem; user-select: none; }
+.cline__txt { word-break: break-all; }
+.cline--neutral .cline__txt { color: var(--tx-code); }
+.cline--success .cline__txt { color: var(--green); }
+.cline--error   .cline__txt { color: var(--red); }
+.cline--info    .cline__txt { color: var(--cyan); }
+.cline--warn    .cline__txt { color: var(--yellow); }
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--sp-2); font-family: var(--f-ui); font-weight: 600;
+  letter-spacing: 0.04em; border-radius: var(--r-sm);
+  border: 1px solid transparent; user-select: none; white-space: nowrap;
+  position: relative; overflow: hidden;
+  transition: background var(--dur-md), border-color var(--dur-md),
+              color var(--dur-md), box-shadow var(--dur-md),
+              transform var(--dur-xs), opacity var(--dur-md);
+}
+
+.btn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.btn:active { transform: scale(0.97); }
+
+.btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background var(--dur-xs);
+}
+.btn:active::after { background: rgba(255,255,255,0.06); }
+
+.btn--sm  { font-size: 0.72rem; padding: 5px 13px; }
+.btn--md  { font-size: 0.8rem;  padding: 7px 18px; }
+.btn--lg  { font-size: 0.86rem; padding: 10px 24px; }
+
+.btn--run {
+  background: linear-gradient(135deg, var(--green-soft), var(--cyan-soft));
+  color: var(--tx-inv); font-weight: 700; font-size: 0.8rem;
+  padding: 7px 20px; text-transform: uppercase; letter-spacing: 0.07em;
+}
+
+.btn--run:hover { box-shadow: 0 4px 22px var(--green-glow); transform: translateY(-1px); }
+.btn--run:active { transform: translateY(0); }
+.btn--run.is-running { opacity: 0.6; pointer-events: none; }
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--cyan), var(--cyan-soft));
+  color: var(--tx-inv); font-weight: 700;
+}
+
+.btn--primary:hover { box-shadow: 0 4px 20px var(--cyan-glow); transform: translateY(-1px); }
+.btn--primary:active { transform: translateY(0); }
+
+.btn--ghost {
+  background: transparent; border-color: var(--bd-1); color: var(--tx-3);
+}
+
+.btn--ghost:hover { border-color: var(--bd-2); color: var(--tx-2); }
+
+.btn--danger {
+  background: transparent; border-color: var(--bd-1); color: var(--tx-3);
+}
+
+.btn--danger:hover { border-color: var(--red-soft); color: var(--red); box-shadow: 0 0 10px var(--red-glow); }
+
+/* ═══════════════════════════════════════════════════════════════
+   FEEDBACK MODAL
+   ═══════════════════════════════════════════════════════════════ */
+.feedback-overlay {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(6,9,16,0.82);
+  backdrop-filter: blur(14px) saturate(160%);
+  display: grid; place-items: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-lg) var(--ease-io);
+}
+
+.feedback-overlay.is-visible { opacity: 1; pointer-events: all; }
+
+.feedback-modal {
+  background: var(--s-raised); border: 1px solid var(--bd-1);
+  border-radius: var(--r-xl); padding: var(--sp-8) 48px;
+  text-align: center; max-width: 420px; width: 90%;
+  position: relative; overflow: hidden;
+  transform: scale(0.87) translateY(22px);
+  transition: transform var(--dur-lg) var(--ease-spring);
+  box-shadow: var(--sh-xl);
+}
+
+.feedback-overlay.is-visible .feedback-modal { transform: scale(1) translateY(0); }
+
+.feedback-modal__stripe {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+}
+
+.feedback-modal--success .feedback-modal__stripe { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+.feedback-modal--error   .feedback-modal__stripe { background: linear-gradient(90deg, var(--red), var(--orange)); }
+.feedback-modal--success { border-color: rgba(16,255,176,0.18); box-shadow: var(--sh-xl), 0 0 50px rgba(16,255,176,0.06); }
+.feedback-modal--error   { border-color: rgba(255,77,109,0.18); box-shadow: var(--sh-xl), 0 0 50px rgba(255,77,109,0.05); }
+
+.feedback-modal__emoji {
+  display: block; font-size: 3.4rem; margin-bottom: var(--sp-4);
+  animation: pop-in 0.5s var(--ease-spring);
+}
+
+@keyframes pop-in { from{transform:scale(0) rotate(-12deg);opacity:0} to{transform:scale(1) rotate(0);opacity:1} }
+
+.feedback-modal__title {
+  font-family: var(--f-brand); font-size: 1.25rem; font-weight: 700;
+  letter-spacing: 0.05em; margin-bottom: var(--sp-2);
+}
+
+.feedback-modal--success .feedback-modal__title { color: var(--green); text-shadow: 0 0 22px var(--green-glow); }
+.feedback-modal--error   .feedback-modal__title { color: var(--red);   text-shadow: 0 0 22px var(--red-glow); }
+
+.feedback-modal__msg { font-size: 0.86rem; color: var(--tx-2); line-height: 1.65; margin-bottom: var(--sp-5); }
+
+.feedback-modal__xp {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  background: var(--cyan-dim); border: 1px solid var(--bd-2);
+  border-radius: var(--r-full); padding: 5px 18px;
+  font-family: var(--f-code); font-size: 0.86rem;
+  font-weight: 700; color: var(--cyan); margin-bottom: var(--sp-5);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LEVEL-UP BANNER
+   ═══════════════════════════════════════════════════════════════ */
+.levelup-banner {
+  position: fixed; z-index: 500;
+  top: calc(var(--header-h) + 14px); left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  background: linear-gradient(135deg, var(--s-overlay), var(--s-float));
+  border: 1px solid var(--cyan); border-radius: var(--r-md);
+  padding: var(--sp-4) var(--sp-6);
+  display: flex; align-items: center; gap: var(--sp-4);
+  box-shadow: var(--sh-lg), 0 0 30px var(--cyan-glow);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-lg) var(--ease-spring), transform var(--dur-lg) var(--ease-spring);
+}
+
+.levelup-banner.is-visible { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+
+.levelup-banner__icon { font-size: 2rem; animation: spin-pop 0.45s var(--ease-spring); }
+@keyframes spin-pop { from{transform:rotate(-180deg) scale(0)} to{transform:rotate(0) scale(1)} }
+
+.levelup-banner__tag {
+  font-family: var(--f-code); font-size: 0.58rem; color: var(--tx-3);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 2px;
+}
+
+.levelup-banner__title {
+  font-family: var(--f-brand); font-size: 0.96rem; font-weight: 700;
+  color: var(--cyan); text-shadow: 0 0 14px var(--cyan-glow); letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST NOTIFICATIONS
+   ═══════════════════════════════════════════════════════════════ */
+.toast-stack {
+  position: fixed; bottom: 22px; right: 22px;
+  display: flex; flex-direction: column; gap: var(--sp-2);
+  z-index: 600; pointer-events: none;
+}
+
+.toast {
+  background: var(--s-raised); border: 1px solid var(--bd-1);
+  border-radius: var(--r-md); padding: var(--sp-3) var(--sp-4);
+  display: flex; align-items: flex-start; gap: var(--sp-3);
+  min-width: 260px; max-width: 320px;
+  box-shadow: var(--sh-lg); pointer-events: all;
+  animation: toast-in 0.32s var(--ease-spring) forwards;
+}
+
+@keyframes toast-in  { from{transform:translateX(110%);opacity:0} to{transform:translateX(0);opacity:1} }
+@keyframes toast-out { from{transform:translateX(0);opacity:1} to{transform:translateX(110%);opacity:0} }
+
+.toast.is-out { animation: toast-out 0.25s var(--ease-io) forwards; }
+
+.toast--achievement { border-color: rgba(251,191,36,0.28); box-shadow: var(--sh-lg), 0 0 18px rgba(251,191,36,0.07); }
+.toast--success     { border-color: rgba(16,255,176,0.18); }
+.toast--error       { border-color: rgba(255,77,109,0.18); }
+
+.toast__icon  { font-size: 1.25rem; flex-shrink: 0; margin-top: 1px; }
+.toast__title { font-size: 0.76rem; font-weight: 600; color: var(--tx-1); margin-bottom: 1px; }
+.toast__desc  { font-size: 0.68rem; color: var(--tx-3); line-height: 1.4; }
+
+/* ═══════════════════════════════════════════════════════════════
+   RANKING VIEW
+   ═══════════════════════════════════════════════════════════════ */
+.view-head { margin-bottom: var(--sp-8); }
+
+.view-head__title {
+  font-family: var(--f-brand); font-size: 1.35rem; font-weight: 700;
+  color: var(--tx-1); letter-spacing: 0.06em; margin-bottom: 4px;
+}
+
+.view-head__sub { font-family: var(--f-code); font-size: 0.76rem; color: var(--tx-3); }
+
+.ranking-wrap { max-width: 700px; }
+.ranking-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+
+.ranking-row {
+  display: flex; align-items: center; gap: var(--sp-4);
+  background: var(--s-overlay); border: 1px solid var(--bd-1);
+  border-radius: var(--r-md); padding: var(--sp-3) var(--sp-5);
+  transition: background var(--dur-xs), border-color var(--dur-xs);
+  border-left-width: 3px;
+}
+
+.ranking-row:hover { background: var(--s-float); border-color: var(--bd-2); }
+
+.ranking-row--me { background: rgba(0,229,255,0.04); border-color: var(--bd-2); }
+.ranking-row--gold   { border-left-color: var(--yellow); }
+.ranking-row--silver { border-left-color: #a0aec0; }
+.ranking-row--bronze { border-left-color: #c77b3f; }
+.ranking-row--other  { border-left-color: var(--bd-1); }
+
+.rk-pos { width: 28px; font-family: var(--f-brand); font-size: 0.86rem; font-weight: 700; text-align: center; flex-shrink: 0; }
+.rk-pos--1 { color: var(--yellow); text-shadow: 0 0 10px var(--yellow-glow); }
+.rk-pos--2 { color: #a0aec0; }
+.rk-pos--3 { color: #c77b3f; }
+
+.rk-avatar {
+  width: 34px; height: 34px; border-radius: var(--r-full);
+  display: grid; place-items: center; font-size: 1rem;
+  flex-shrink: 0; border: 1px solid;
+}
+
+.rk-info { flex: 1; min-width: 0; }
+
+.rk-name { font-size: 0.83rem; font-weight: 600; color: var(--tx-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rk-name--me { color: var(--cyan); }
+.rk-sub  { font-family: var(--f-code); font-size: 0.63rem; color: var(--tx-3); }
+
+.rk-metrics { display: flex; align-items: center; gap: var(--sp-5); flex-shrink: 0; }
+
+.rk-metric { text-align: right; }
+.rk-metric__val { font-family: var(--f-code); font-size: 0.8rem; font-weight: 700; color: var(--cyan); }
+.rk-metric__lbl { font-family: var(--f-code); font-size: 0.58rem; color: var(--tx-3); margin-top: 1px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   ACHIEVEMENTS VIEW
+   ═══════════════════════════════════════════════════════════════ */
+.achievements-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: var(--sp-4); max-width: 920px;
+}
+
+.ach-card {
+  background: var(--s-overlay); border: 1px solid var(--bd-1);
+  border-radius: var(--r-md); padding: var(--sp-5);
+  position: relative; overflow: hidden;
+  transition: transform var(--dur-md), border-color var(--dur-md), box-shadow var(--dur-md);
+}
+
+.ach-card:hover { transform: translateY(-2px); box-shadow: var(--sh-md); }
+
+.ach-card.is-unlocked { border-color: rgba(251,191,36,0.26); box-shadow: 0 4px 18px rgba(251,191,36,0.05); }
+.ach-card.is-unlocked:hover { border-color: rgba(251,191,36,0.42); }
+.ach-card.is-locked { opacity: 0.38; filter: grayscale(1); pointer-events: none; }
+
+.ach-card__bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--yellow), var(--orange));
+  opacity: 0; transition: opacity var(--dur-md);
+}
+
+.ach-card.is-unlocked .ach-card__bar { opacity: 1; }
+
+.ach-card__icon { font-size: 2rem; margin-bottom: var(--sp-3); display: block; }
+.ach-card__name { font-weight: 700; font-size: 0.86rem; color: var(--tx-1); margin-bottom: 3px; }
+.ach-card__desc { font-size: 0.72rem; color: var(--tx-3); line-height: 1.5; margin-bottom: var(--sp-3); }
+
+.ach-card__status {
+  font-family: var(--f-code); font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.ach-card__status--earned { color: var(--yellow); }
+.ach-card__status--locked { color: var(--tx-4); }
+
+/* ═══════════════════════════════════════════════════════════════
+   FX LAYER
+   ═══════════════════════════════════════════════════════════════ */
+#fx-layer { position: fixed; inset: 0; pointer-events: none; z-index: 300; overflow: hidden; }
+
+.particle {
+  position: absolute; border-radius: 50%;
+  animation: px-burst 0.9s var(--ease-out) forwards;
+}
+
+@keyframes px-burst {
+  from { transform: translate(0,0) scale(1); opacity: 1; }
+  to   { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+.confetti-bit {
+  position: absolute; top: -10px;
+  animation: cf-fall linear forwards; border-radius: 2px;
+}
+
+@keyframes cf-fall { to { transform: translateY(110vh) rotate(var(--rot)); opacity: 0; } }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 800px) {
+  :root { --sidebar-w: 280px; --mission-w: 100%; }
+
+  .sidebar-toggle { display: inline-flex; }
+
+  #sidebar {
+    position: fixed; left: 0; top: var(--header-h); bottom: 0;
+    z-index: 150; transform: translateX(-100%);
+    box-shadow: var(--sh-xl);
+  }
+
+  #sidebar.is-open { transform: translateX(0); }
+
+  #game-view { flex-direction: column; }
+
+  #mission-panel {
+    width: 100%; min-width: unset; border-right: none;
+    border-bottom: 1px solid var(--bd-1); max-height: 42vh;
+  }
+
+  .hud { display: none; }
+  .rk-metrics { display: none; }
+}
+
+@media (max-width: 1100px) {
+  :root { --mission-w: 300px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Ambient layers ── -->
+<div class="bg-grid"      aria-hidden="true"></div>
+<div class="bg-radial"    aria-hidden="true"></div>
+<div class="bg-scanlines" aria-hidden="true"></div>
+
+<!-- ── FX canvas ── -->
+<div id="fx-layer" aria-hidden="true"></div>
+
+<!-- ── Toast stack ── -->
+<div id="toast-stack" class="toast-stack" role="status" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ── Level-up banner ── -->
+<div id="levelup-banner" class="levelup-banner" role="alert" aria-live="assertive">
+  <span class="levelup-banner__icon" aria-hidden="true">⚡</span>
+  <div>
+    <div class="levelup-banner__tag">Level Up!</div>
+    <div class="levelup-banner__title" id="levelup-text">Nível 2 Desbloqueado</div>
+  </div>
+</div>
+
+<!-- ── Feedback overlay ── -->
+<div id="feedback-overlay" class="feedback-overlay" role="dialog" aria-modal="true" aria-labelledby="fb-title">
+  <div class="feedback-modal" id="feedback-modal">
+    <div class="feedback-modal__stripe"></div>
+    <span class="feedback-modal__emoji" id="fb-emoji" aria-hidden="true">🎉</span>
+    <h2  class="feedback-modal__title"  id="fb-title">DESAFIO CONCLUÍDO!</h2>
+    <p   class="feedback-modal__msg"    id="fb-msg">Incrível! Continue assim.</p>
+    <div class="feedback-modal__xp"     id="fb-xp"><span aria-hidden="true">⚡</span><span id="fb-xp-val">+50 XP</span></div>
+    <button class="btn btn--primary btn--lg" id="fb-cta" onclick="UI.closeFeedback()">Continuar →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     SPLASH SCREEN
+     ════════════════════════════════════════════════════════════════ -->
+<div id="splash" role="main" aria-label="Tela inicial CodeGame">
+  <div class="splash__glow" aria-hidden="true"></div>
+
+  <div class="splash__logo" aria-label="CodeGame">
+    <div class="splash__logo-mark" aria-hidden="true">⌨️</div>
+    <span class="splash__wordmark">CODE<em>GAME</em></span>
+  </div>
+
+  <p class="splash__tagline">Aprenda programação resolvendo desafios reais</p>
+
+  <div class="splash__stats" aria-label="Estatísticas da plataforma">
+    <div class="splash__stat">
+      <span class="splash__stat-value">30</span>
+      <span class="splash__stat-label">Missões</span>
+    </div>
+    <div class="splash__stat">
+      <span class="splash__stat-value">10</span>
+      <span class="splash__stat-label">Níveis</span>
+    </div>
+    <div class="splash__stat">
+      <span class="splash__stat-value">15</span>
+      <span class="splash__stat-label">Conquistas</span>
+    </div>
+  </div>
+
+  <div class="splash__cta">
+    <button class="splash__btn" id="splash-cta" onclick="App.launch()">
+      <span class="splash__btn-icon" aria-hidden="true">▶</span>
+      Começar Agora
+    </button>
+  </div>
+
+  <p class="splash__footer" aria-label="Progresso salvo automaticamente">
+    ✦ Progresso salvo automaticamente no navegador
+  </p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     APP
+     ════════════════════════════════════════════════════════════════ -->
+<div id="app" aria-hidden="true">
+
+  <!-- HEADER -->
+  <header id="header" role="banner">
+    <div class="logo" aria-label="CodeGame — página inicial">
+      <div class="logo__mark" aria-hidden="true">⌨️</div>
+      <span class="logo__wordmark">CODE<em>GAME</em></span>
+      <span class="logo__version" aria-label="Versão 3.1">v3.1</span>
+    </div>
+
+    <div class="hud" role="complementary" aria-label="Estatísticas do jogador">
+      <div class="hud__group">
+        <span class="hud__icon" aria-hidden="true">⚡</span>
+        <span class="visually-hidden">XP Total:</span>
+        <span class="hud__value" id="hud-xp" aria-live="polite">0</span>
+        <span style="font-size:0.68rem;color:var(--tx-3)">XP</span>
+      </div>
+      <div class="hud__sep" aria-hidden="true"></div>
+      <div class="hud__group">
+        <span class="hud__icon" aria-hidden="true">🏆</span>
+        <span class="visually-hidden">Pontuação:</span>
+        <span class="hud__value" id="hud-score" aria-live="polite">0</span>
+        <span style="font-size:0.68rem;color:var(--tx-3)">pts</span>
+      </div>
+      <div class="hud__sep" aria-hidden="true"></div>
+      <div class="hud__badge" id="hud-level" aria-live="polite">⭐ Nível 1</div>
+    </div>
+
+    <div class="header-right">
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Abrir/fechar menu lateral" aria-expanded="false" onclick="App.toggleSidebar()">☰</button>
+      <button class="btn btn--danger btn--sm" onclick="GameController.confirmReset()" aria-label="Resetar todo o progresso">
+        ↺ Resetar
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <div id="main-layout">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" aria-label="Painel do jogador e missões">
+
+      <div class="player-card">
+        <div class="player-card__row">
+          <div class="player-avatar">
+            <div class="player-avatar__ring" aria-hidden="true"></div>
+            <div class="player-avatar__ring-mask" aria-hidden="true"></div>
+            <div class="player-avatar__face" id="player-emoji" aria-hidden="true">👾</div>
+          </div>
+          <div>
+            <div class="player-info__name" id="player-name" title="Clique para renomear" onclick="App.promptRename()" tabindex="0" aria-label="Nome do jogador, clique para alterar">JOGADOR_01</div>
+            <div class="player-info__title" id="player-title">// Iniciante</div>
+          </div>
+        </div>
+
+        <div class="xp-block__header">
+          <span class="xp-block__label">Próximo nível</span>
+          <span class="xp-block__value" id="xp-fraction" aria-live="polite">0 / 200</span>
+        </div>
+        <div class="xp-track" role="progressbar" aria-label="Progresso de XP" aria-valuemin="0" aria-valuemax="100">
+          <div class="xp-fill" id="xp-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-block__row">
+          <span class="progress-block__label">Progresso geral</span>
+          <span class="progress-block__value" id="progress-val" aria-live="polite">0 / 30</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-label="Desafios concluídos" aria-valuemin="0" aria-valuemax="30">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <span class="sidebar-section__label">🎯 Missões</span>
+      </div>
+
+      <nav id="challenge-list" aria-label="Lista de missões"></nav>
+
+      <div class="stats-grid" role="complementary" aria-label="Estatísticas rápidas">
+        <div class="stat-tile">
+          <div class="stat-tile__value" id="st-done"  aria-live="polite">0</div>
+          <div class="stat-tile__label">Completos</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile__value" id="st-streak" aria-live="polite">0</div>
+          <div class="stat-tile__label">Sequência</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile__value" id="st-level" aria-live="polite">1</div>
+          <div class="stat-tile__label">Nível</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile__value" id="st-ach"  aria-live="polite">0</div>
+          <div class="stat-tile__label">Conquistas</div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- CONTENT -->
+    <div id="content">
+
+      <!-- Tabs -->
+      <div class="tabs-bar" role="tablist" aria-label="Seções">
+        <button class="tab-btn is-active" role="tab" aria-selected="true"  data-tab="game"         onclick="UI.switchTab('game', this)">🎮 Desafios</button>
+        <button class="tab-btn"           role="tab" aria-selected="false" data-tab="ranking"      onclick="UI.switchTab('ranking', this)">🏆 Ranking</button>
+        <button class="tab-btn"           role="tab" aria-selected="false" data-tab="achievements" onclick="UI.switchTab('achievements', this)">🏅 Conquistas</button>
+      </div>
+
+      <div id="main-panel">
+
+        <!-- GAME VIEW -->
+        <div id="game-view" class="view" role="tabpanel">
+
+          <!-- Mission panel -->
+          <div id="mission-panel" aria-label="Detalhes da missão">
+
+            <div id="welcome-pane" class="welcome-pane">
+              <div class="welcome-pane__icon" aria-hidden="true">🚀</div>
+              <h2 class="welcome-pane__title">Pronto para jogar?</h2>
+              <p  class="welcome-pane__sub">Selecione uma missão na lista para começar sua jornada de programação.</p>
+              <div class="welcome-pane__hint">
+                <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span>
+                <span>para executar o código</span>
+              </div>
+            </div>
+
+            <div id="mission-detail" class="mission-detail">
+              <div class="mission-header">
+                <div class="mission-num" id="mission-num">#01</div>
+                <div>
+                  <h2 class="mission-title-text" id="mission-title">Título</h2>
+                  <div class="badge-row" id="mission-badges"></div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <div class="info-card__heading">📋 Objetivo</div>
+                <div class="info-card__body" id="mission-desc"></div>
+              </div>
+
+              <div class="expected-card">
+                <div class="expected-card__bar">
+                  <span class="expected-card__label">💡 Saída esperada</span>
+                </div>
+                <pre class="expected-card__body" id="mission-expected"></pre>
+              </div>
+
+              <div>
+                <button class="hint-toggle" id="hint-toggle" onclick="UI.toggleHint()" aria-expanded="false">
+                  <span aria-hidden="true">💡</span>
+                  <span id="hint-label">Ver Dica</span>
+                  <span class="hint-toggle__chevron" aria-hidden="true">▾</span>
+                </button>
+                <div class="hint-body" id="hint-body" role="region" aria-label="Dica">
+                  <div class="hint-body__label">💡 Dica</div>
+                  <div class="hint-body__text" id="hint-text"></div>
+                </div>
+              </div>
+
+            </div><!-- /mission-detail -->
+          </div><!-- /mission-panel -->
+
+          <!-- Editor -->
+          <div id="editor-area" aria-label="Editor de código">
+
+            <div class="editor-bar">
+              <div class="editor-bar__left">
+                <div class="file-tab">
+                  <div class="file-dot" id="file-dot"></div>
+                  <span id="editor-filename" style="font-family:var(--f-code);font-size:0.7rem;">selecione_uma_missao.js</span>
+                </div>
+                <div class="shortcut-hint" aria-hidden="true">
+                  <span class="kbd">Ctrl+Enter</span> executar
+                </div>
+              </div>
+              <div class="editor-bar__right">
+                <button class="btn btn--ghost btn--sm" onclick="GameController.resetCode()" aria-label="Resetar código para o inicial">↺ Reset</button>
+                <button class="btn btn--run" id="run-btn" onclick="GameController.runCode()" aria-label="Executar código (Ctrl+Enter)">
+                  <span aria-hidden="true">▶</span> Executar
+                </button>
+              </div>
+            </div>
+
+            <div class="editor-body">
+              <div id="line-numbers" aria-hidden="true">1</div>
+              <textarea
+                id="code-editor"
+                spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"
+                aria-label="Editor de código JavaScript"
+                placeholder="// ← Selecione uma missão para começar"
+              ></textarea>
+            </div>
+
+            <div class="console" role="log" aria-label="Console de saída">
+              <div class="console__bar">
+                <div class="console__title">
+                  <div class="console__dot" id="console-dot"></div>
+                  <span>Console</span>
+                </div>
+                <button class="console__clear" onclick="UI.clearConsole()" aria-label="Limpar console">✕ Limpar</button>
+              </div>
+              <div class="console__body" id="console-body">
+                <div class="cline cline--info">
+                  <span class="cline__pfx" aria-hidden="true">ℹ</span>
+                  <span class="cline__txt">Aguardando execução... Pressione Executar ou Ctrl+Enter</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /editor-area -->
+        </div><!-- /game-view -->
+
+        <!-- RANKING VIEW -->
+        <div id="ranking-view" class="view" role="tabpanel" aria-label="Ranking">
+          <div class="view-head">
+            <h2 class="view-head__title">🏆 Ranking Global</h2>
+            <p  class="view-head__sub">// Os melhores programadores da plataforma</p>
+          </div>
+          <div class="ranking-wrap">
+            <div class="ranking-list" id="ranking-list" aria-label="Classificação"></div>
+          </div>
+        </div>
+
+        <!-- ACHIEVEMENTS VIEW -->
+        <div id="achievements-view" class="view" role="tabpanel" aria-label="Conquistas">
+          <div class="view-head">
+            <h2 class="view-head__title">🏅 Conquistas</h2>
+            <p  class="view-head__sub">// Desbloqueie conquistas progredindo nos desafios</p>
+          </div>
+          <div class="achievements-grid" id="achievements-grid" aria-label="Grade de conquistas"></div>
+        </div>
+
+      </div><!-- /main-panel -->
+    </div><!-- /content -->
+  </div><!-- /main-layout -->
+</div><!-- /app -->
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   CODEGAME ENGINE — v3.1 (Production Release)
+   ════════════════════════════════════════════════════════════════
+
+   Module index:
+     Data            → Immutable game data (challenges, achievements, levels)
+     Store           → Centralized state + localStorage persistence
+     LevelSystem     → XP / level progression calculations
+     Validation      → Safe code sandbox + smart output validation
+     Effects         → Particles, confetti, DOM flash animations
+     Notifications   → Toast stack + level-up banner
+     UI              → DOM rendering (cached refs, DocumentFragments)
+     GameController  → Game actions orchestrator
+     EventManager    → Global event listeners
+     App             → Bootstrap + splash + sidebar toggle
+   ════════════════════════════════════════════════════════════════ */
+'use strict';
+
+/* ────────────────────────────────────────────────────────────────
+   DATA — static game content
+   ──────────────────────────────────────────────────────────────── */
+const Data = (() => {
+
+  const CHALLENGES = [
+    /* ══ INICIANTE ══ */
+    {
+      id:1, title:"Olá, Mundo!", difficulty:"beginner", xp:30,
+      description:`Seu primeiro passo! Use <code>console.log()</code> para imprimir <code>'Olá, Mundo!'</code>. Toda linguagem começa aqui — é uma tradição universal.`,
+      starter:`// Missão 1: Seu primeiro programa\n// Use console.log() para imprimir a mensagem abaixo\n\n`,
+      expected:"Olá, Mundo!",
+      hint:"console.log('Olá, Mundo!') — note as aspas simples dentro dos parênteses.",
+      validate:(out)=> out.trim() === "Olá, Mundo!"
+    },
+    {
+      id:2, title:"Variáveis com let", difficulty:"beginner", xp:40,
+      description:`Declare uma variável <code>nome</code> com <code>let</code>, atribua seu primeiro nome e imprima com <code>console.log(nome)</code>. O <code>let</code> permite reatribuição futura.`,
+      starter:`// Missão 2: Declare e use uma variável\n// 1. let nome = "SeuNome"\n// 2. console.log(nome)\n\n`,
+      expected:"(qualquer nome não vazio)",
+      hint:"let nome = 'Maria'; console.log(nome); — substitua pelo seu nome!",
+      validate:(out,code)=> code.includes("let") && code.includes("console.log") && out.trim().length > 0 && !out.includes("undefined")
+    },
+    {
+      id:3, title:"Constantes com const", difficulty:"beginner", xp:40,
+      description:`Declare <code>PI = 3.14</code> e <code>GRAVIDADE = 9.8</code> usando <code>const</code>. Imprima as duas. <code>const</code> é para valores que não mudam — boa prática para constantes.`,
+      starter:`// Missão 3: Constantes imutáveis\n// const PI = 3.14\n// const GRAVIDADE = 9.8\n// console.log cada uma\n\n`,
+      expected:"3.14\n9.8",
+      hint:"const PI = 3.14; const GRAVIDADE = 9.8; console.log(PI); console.log(GRAVIDADE);",
+      validate:(out,code)=> code.includes("const") && out.includes("3.14") && out.includes("9.8")
+    },
+    {
+      id:4, title:"Soma de Números", difficulty:"beginner", xp:50,
+      description:`Declare <code>a = 15</code> e <code>b = 27</code>. Calcule a soma, guarde em <code>resultado</code> e imprima. O resultado deve ser <code>42</code>.`,
+      starter:`// Missão 4: Adição simples\nlet a = 15;\nlet b = 27;\n// let resultado = a + b\n// console.log(resultado)\n\n`,
+      expected:"42",
+      hint:"let resultado = a + b; console.log(resultado);",
+      validate:(out)=> out.trim() === "42"
+    },
+    {
+      id:5, title:"5 Operadores Matemáticos", difficulty:"beginner", xp:55,
+      description:`Com <code>x = 10</code> e <code>y = 3</code>, imprima todos os operadores: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> e <code>%</code> (módulo / resto da divisão).`,
+      starter:`// Missão 5: Os 5 operadores\nlet x = 10;\nlet y = 3;\n// console.log(x + y)\n// console.log(x - y)\n// etc...\n\n`,
+      expected:"13\n7\n30\n3.3333333333333335\n1",
+      hint:"console.log(x+y); console.log(x-y); console.log(x*y); console.log(x/y); console.log(x%y);",
+      validate:(out)=> out.includes("13") && out.includes("7") && out.includes("30") && out.includes("1")
+    },
+    {
+      id:6, title:"Template Literals", difficulty:"beginner", xp:55,
+      description:`Com <code>nome = 'Ana'</code> e <code>sobrenome = 'Silva'</code>, use template literal (crase + <code>${"{"}nome{"}"}</code>) para imprimir: <code>Olá, Ana Silva! Bem-vinda ao CodeGame.</code>`,
+      starter:"// Missão 6: Template literals (interpolação)\nlet nome = 'Ana';\nlet sobrenome = 'Silva';\n// console.log(`Olá, ${nome} ...`)\n\n",
+      expected:"Olá, Ana Silva! Bem-vinda ao CodeGame.",
+      hint:"console.log(`Olá, ${nome} ${sobrenome}! Bem-vinda ao CodeGame.`);",
+      validate:(out)=> out.trim() === "Olá, Ana Silva! Bem-vinda ao CodeGame."
+    },
+    {
+      id:7, title:"typeof — Tipos de Dados", difficulty:"beginner", xp:60,
+      description:`Use <code>typeof</code> para checar o tipo de: <code>42</code> (number), <code>'hello'</code> (string) e <code>true</code> (boolean). Imprima cada resultado em uma linha.`,
+      starter:`// Missão 7: typeof\n// console.log(typeof 42)\n// console.log(typeof 'hello')\n// console.log(typeof true)\n\n`,
+      expected:"number\nstring\nboolean",
+      hint:"console.log(typeof 42); console.log(typeof 'hello'); console.log(typeof true);",
+      validate:(out)=> out.includes("number") && out.includes("string") && out.includes("boolean")
+    },
+    /* ══ INTERMEDIÁRIO ══ */
+    {
+      id:8, title:"Condicional if / else", difficulty:"intermediate", xp:80,
+      description:`Com <code>idade = 17</code>, use <code>if/else</code>: se <code>idade >= 18</code> imprima <code>'Maior de idade'</code>, caso contrário <code>'Menor de idade'</code>.`,
+      starter:`// Missão 8: if / else\nlet idade = 17;\n// if (idade >= 18) { ... } else { ... }\n\n`,
+      expected:"Menor de idade",
+      hint:"if (idade >= 18) { console.log('Maior de idade'); } else { console.log('Menor de idade'); }",
+      validate:(out)=> out.trim() === "Menor de idade"
+    },
+    {
+      id:9, title:"Switch / Case", difficulty:"intermediate", xp:85,
+      description:`Com <code>diaSemana = 3</code>, use <code>switch</code> para imprimir: 1→Segunda, 2→Terça, 3→Quarta, 4→Quinta, 5→Sexta. Use <code>default</code> para outros.`,
+      starter:`// Missão 9: switch / case\nlet diaSemana = 3;\n// switch(diaSemana) { case 1: ... }\n\n`,
+      expected:"Quarta",
+      hint:"switch(diaSemana) { case 1: console.log('Segunda'); break; case 3: console.log('Quarta'); break; default: console.log('Outro'); }",
+      validate:(out)=> out.trim() === "Quarta"
+    },
+    {
+      id:10, title:"Loop for — 1 a 5", difficulty:"intermediate", xp:90,
+      description:`Use um loop <code>for</code> para imprimir os inteiros de <code>1</code> a <code>5</code>, um por linha. Simples mas fundamental — o for é a base de toda iteração.`,
+      starter:`// Missão 10: Loop for\n// for (let i = 1; i <= 5; i++) { console.log(i); }\n\n`,
+      expected:"1\n2\n3\n4\n5",
+      hint:"for (let i = 1; i <= 5; i++) { console.log(i); }",
+      validate:(out)=>{ const ls=out.trim().split("\n").map(l=>l.trim()); return ls.join(",") === "1,2,3,4,5"; }
+    },
+    {
+      id:11, title:"Tabuada com for", difficulty:"intermediate", xp:95,
+      description:`Com <code>numero = 5</code>, imprima a tabuada completa (1 a 10) no formato: <code>5 x 1 = 5</code>, <code>5 x 2 = 10</code> etc.`,
+      starter:`// Missão 11: Tabuada\nlet numero = 5;\n// for (let i = 1; i <= 10; i++) { ... }\n\n`,
+      expected:"5 x 1 = 5\n5 x 2 = 10\n5 x 3 = 15\n5 x 4 = 20\n5 x 5 = 25\n5 x 6 = 30\n5 x 7 = 35\n5 x 8 = 40\n5 x 9 = 45\n5 x 10 = 50",
+      hint:"for (let i = 1; i <= 10; i++) { console.log(`${numero} x ${i} = ${numero * i}`); }",
+      validate:(out)=> out.includes("5 x 1 = 5") && out.includes("5 x 5 = 25") && out.includes("5 x 10 = 50")
+    },
+    {
+      id:12, title:"while — Números Pares", difficulty:"intermediate", xp:90,
+      description:`Use <code>while</code> para imprimir todos os pares de 0 a 10 inclusive: <code>0, 2, 4, 6, 8, 10</code>. Incremente de 2 em 2.`,
+      starter:`// Missão 12: while com pares\n// let n = 0;\n// while (n <= 10) { console.log(n); n += 2; }\n\n`,
+      expected:"0\n2\n4\n6\n8\n10",
+      hint:"let n = 0; while (n <= 10) { console.log(n); n += 2; }",
+      validate:(out)=>{ const ls=out.trim().split("\n").map(l=>l.trim()); return ls.join(",") === "0,2,4,6,8,10"; }
+    },
+    {
+      id:13, title:"Função Simples", difficulty:"intermediate", xp:100,
+      description:`Crie a função <code>saudar(nome)</code> que retorna <code>'Olá, [nome]!'</code>. Chame com <code>'Carlos'</code> e imprima o resultado.`,
+      starter:`// Missão 13: Criando e chamando funções\n// function saudar(nome) { return \`Olá, \${nome}!\`; }\n// console.log(saudar('Carlos'))\n\n`,
+      expected:"Olá, Carlos!",
+      hint:"function saudar(nome) { return `Olá, ${nome}!`; } console.log(saudar('Carlos'));",
+      validate:(out)=> out.trim() === "Olá, Carlos!"
+    },
+    {
+      id:14, title:"Arrow Function", difficulty:"intermediate", xp:105,
+      description:`Crie a arrow function <code>quadrado</code> que eleva ao quadrado. Imprima: <code>quadrado(4)</code> → 16 e <code>quadrado(7)</code> → 49.`,
+      starter:`// Missão 14: Arrow functions\n// const quadrado = (n) => n * n;\n// console.log(quadrado(4));\n// console.log(quadrado(7));\n\n`,
+      expected:"16\n49",
+      hint:"const quadrado = (n) => n * n; console.log(quadrado(4)); console.log(quadrado(7));",
+      validate:(out)=> out.includes("16") && out.includes("49")
+    },
+    {
+      id:15, title:"Arrays — Fundamentos", difficulty:"intermediate", xp:100,
+      description:`Declare <code>frutas = ['maçã', 'banana', 'laranja', 'uva']</code>. Imprima: o array inteiro, seu <code>.length</code>, o primeiro e o último elemento.`,
+      starter:`// Missão 15: Arrays\n// const frutas = ['maçã', 'banana', 'laranja', 'uva'];\n// console.log(frutas);\n// console.log(frutas.length);\n// etc...\n\n`,
+      expected:"[ 'maçã', 'banana', 'laranja', 'uva' ]\n4\nmaçã\nuva",
+      hint:"console.log(frutas); console.log(frutas.length); console.log(frutas[0]); console.log(frutas[frutas.length - 1]);",
+      validate:(out,code)=> code.includes("frutas") && out.includes("4") && out.includes("maçã") && out.includes("uva")
+    },
+    {
+      id:16, title:"push() e pop()", difficulty:"intermediate", xp:110,
+      description:`Com <code>numeros = [1,2,3,4,5]</code>: adicione 6 com <code>.push(6)</code> e remova o último com <code>.pop()</code>. Imprima o array final e seu comprimento. O resultado deve ser o original.`,
+      starter:`// Missão 16: Mutação de arrays\nlet numeros = [1, 2, 3, 4, 5];\n// numeros.push(6);\n// numeros.pop();\n// console.log(numeros);\n// console.log(numeros.length);\n\n`,
+      expected:"[ 1, 2, 3, 4, 5 ]\n5",
+      hint:"numeros.push(6); numeros.pop(); console.log(numeros); console.log(numeros.length);",
+      validate:(out,code)=> code.includes("push") && code.includes("pop") && out.includes("5") && !out.includes(" 6")
+    },
+    /* ══ AVANÇADO ══ */
+    {
+      id:17, title:"Array.map()", difficulty:"advanced", xp:140,
+      description:`Com <code>numeros = [1,2,3,4,5]</code>, use <code>.map()</code> para criar um novo array dobrando cada valor. Resultado esperado: <code>[2, 4, 6, 8, 10]</code>.`,
+      starter:`// Missão 17: map() — transformação\nconst numeros = [1, 2, 3, 4, 5];\n// const dobrado = numeros.map(n => n * 2);\n// console.log(dobrado);\n\n`,
+      expected:"[ 2, 4, 6, 8, 10 ]",
+      hint:"const dobrado = numeros.map(n => n * 2); console.log(dobrado);",
+      validate:(out)=> out.includes("2") && out.includes("4") && out.includes("6") && out.includes("8") && out.includes("10")
+    },
+    {
+      id:18, title:"Array.filter()", difficulty:"advanced", xp:140,
+      description:`Com <code>numeros = [1..10]</code>, use <code>.filter()</code> para manter apenas os números pares. Resultado: <code>[2, 4, 6, 8, 10]</code>.`,
+      starter:`// Missão 18: filter() — filtragem\nconst numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\n// const pares = numeros.filter(n => n % 2 === 0);\n// console.log(pares);\n\n`,
+      expected:"[ 2, 4, 6, 8, 10 ]",
+      hint:"const pares = numeros.filter(n => n % 2 === 0); console.log(pares);",
+      validate:(out)=> out.includes("2") && out.includes("10") && !out.includes(" 1,") && !out.includes(" 3,")
+    },
+    {
+      id:19, title:"Array.reduce()", difficulty:"advanced", xp:150,
+      description:`Com <code>numeros = [10,20,30,40,50]</code>, use <code>.reduce()</code> para calcular a soma total. Resultado: <code>150</code>.`,
+      starter:`// Missão 19: reduce() — acumulação\nconst numeros = [10, 20, 30, 40, 50];\n// const soma = numeros.reduce((acc, n) => acc + n, 0);\n// console.log(soma);\n\n`,
+      expected:"150",
+      hint:"const soma = numeros.reduce((acc, n) => acc + n, 0); console.log(soma);",
+      validate:(out)=> out.trim() === "150"
+    },
+    {
+      id:20, title:"Objetos JavaScript", difficulty:"advanced", xp:145,
+      description:`Crie o objeto <code>pessoa</code> com: <code>nome:'Lucas'</code>, <code>idade:28</code>, <code>profissao:'Dev'</code>. Imprima cada propriedade com dot notation.`,
+      starter:`// Missão 20: Objetos\n// const pessoa = { nome:'Lucas', idade:28, profissao:'Dev' };\n// console.log(pessoa.nome);\n// console.log(pessoa.idade);\n// console.log(pessoa.profissao);\n\n`,
+      expected:"Lucas\n28\nDev",
+      hint:"const pessoa = { nome:'Lucas', idade:28, profissao:'Dev' }; console.log(pessoa.nome); console.log(pessoa.idade); console.log(pessoa.profissao);",
+      validate:(out,code)=> out.includes("Lucas") && out.includes("28") && out.includes("Dev") && code.includes("{")
+    },
+    {
+      id:21, title:"Objetos com Métodos", difficulty:"advanced", xp:160,
+      description:`Crie <code>calculadora</code> com métodos <code>somar(a,b)</code>, <code>subtrair(a,b)</code>, <code>multiplicar(a,b)</code>. Teste: somar(5,3)→8, subtrair(10,4)→6, multiplicar(3,7)→21.`,
+      starter:`// Missão 21: Métodos em objetos\nconst calculadora = {\n  somar: (a, b) => /* a + b */,\n  subtrair: (a, b) => /* a - b */,\n  multiplicar: (a, b) => /* a * b */,\n};\nconsole.log(calculadora.somar(5, 3));\nconsole.log(calculadora.subtrair(10, 4));\nconsole.log(calculadora.multiplicar(3, 7));\n`,
+      expected:"8\n6\n21",
+      hint:"somar: (a, b) => a + b,  subtrair: (a, b) => a - b,  multiplicar: (a, b) => a * b",
+      validate:(out)=> out.includes("8") && out.includes("6") && out.includes("21")
+    },
+    {
+      id:22, title:"Recursão — Fatorial", difficulty:"advanced", xp:175,
+      description:`Crie a função recursiva <code>fatorial(n)</code>. Caso base: retornar 1 quando n ≤ 1. Caso recursivo: <code>n * fatorial(n-1)</code>. Imprima fatorial(5)→120 e fatorial(6)→720.`,
+      starter:`// Missão 22: Recursão\nfunction fatorial(n) {\n  // if (n <= 1) return 1;\n  // return n * fatorial(n - 1);\n}\nconsole.log(fatorial(5)); // 120\nconsole.log(fatorial(6)); // 720\n`,
+      expected:"120\n720",
+      hint:"function fatorial(n) { if (n <= 1) return 1; return n * fatorial(n - 1); }",
+      validate:(out)=> out.includes("120") && out.includes("720")
+    },
+    {
+      id:23, title:"Closure — Contador", difficulty:"advanced", xp:180,
+      description:`Crie <code>criarContador()</code> que retorna uma função. Cada chamada deve incrementar e retornar um contador interno. Chame 3 vezes → imprimir 1, 2, 3.`,
+      starter:`// Missão 23: Closure\nfunction criarContador() {\n  // let count = 0;\n  // return () => ++count;\n}\nconst contar = criarContador();\nconsole.log(contar()); // 1\nconsole.log(contar()); // 2\nconsole.log(contar()); // 3\n`,
+      expected:"1\n2\n3",
+      hint:"function criarContador() { let count = 0; return () => ++count; }",
+      validate:(out)=>{ const ls=out.trim().split("\n").map(l=>l.trim()); return ls.includes("1") && ls.includes("2") && ls.includes("3"); }
+    },
+    {
+      id:24, title:"Spread & Destructuring", difficulty:"advanced", xp:165,
+      description:`Com <code>arr1=[1,2,3]</code> e <code>arr2=[4,5,6]</code>, combine com spread (<code>...</code>) em <code>combinado</code>. Desestruture os 3 primeiros em <code>a,b,c</code> e imprima tudo.`,
+      starter:`// Missão 24: Spread e Destructuring\nconst arr1 = [1, 2, 3];\nconst arr2 = [4, 5, 6];\n// const combinado = [...arr1, ...arr2];\n// const [a, b, c] = combinado;\n// console.log(combinado);\n// console.log(a); console.log(b); console.log(c);\n\n`,
+      expected:"[ 1, 2, 3, 4, 5, 6 ]\n1\n2\n3",
+      hint:"const combinado = [...arr1, ...arr2]; const [a, b, c] = combinado; console.log(combinado); console.log(a); console.log(b); console.log(c);",
+      validate:(out,code)=> code.includes("...") && out.includes("4") && out.includes("6") && out.includes("1")
+    },
+    {
+      id:25, title:"FizzBuzz Clássico", difficulty:"advanced", xp:160,
+      description:`Para 1 a 20: divisível por 3 e 5 → <code>'FizzBuzz'</code>, só por 3 → <code>'Fizz'</code>, só por 5 → <code>'Buzz'</code>, senão o número. Verifique: 15 → FizzBuzz.`,
+      starter:`// Missão 25: FizzBuzz\nfor (let i = 1; i <= 20; i++) {\n  // if (i % 15 === 0) → "FizzBuzz"\n  // else if (i % 3 === 0) → "Fizz"\n  // else if (i % 5 === 0) → "Buzz"\n  // else → i\n}\n`,
+      expected:"1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz",
+      hint:"if (i%15===0) console.log('FizzBuzz'); else if (i%3===0) console.log('Fizz'); else if (i%5===0) console.log('Buzz'); else console.log(i);",
+      validate:(out)=> out.includes("FizzBuzz") && out.includes("Fizz") && out.includes("Buzz") && !out.includes("15\n")
+    },
+    {
+      id:26, title:"Palíndromo", difficulty:"advanced", xp:175,
+      description:`Crie <code>isPalindromo(str)</code> que retorna <code>true</code> se a string é igual invertida. Teste: <code>'arara'</code>→true, <code>'racecar'</code>→true, <code>'hello'</code>→false.`,
+      starter:`// Missão 26: Palíndromo\nfunction isPalindromo(str) {\n  // return str === str.split('').reverse().join('');\n}\nconsole.log(isPalindromo('arara'));   // true\nconsole.log(isPalindromo('racecar')); // true\nconsole.log(isPalindromo('hello'));   // false\n`,
+      expected:"true\ntrue\nfalse",
+      hint:"return str === str.split('').reverse().join('');",
+      validate:(out)=>{ const ls=out.trim().split("\n").map(l=>l.trim()); return ls[0]==="true" && ls[1]==="true" && ls[2]==="false"; }
+    },
+    {
+      id:27, title:"Promises", difficulty:"advanced", xp:190,
+      description:`Crie <code>buscarDado(id)</code> retornando uma <code>Promise</code>: resolve com <code>'Dado encontrado: ID [id]'</code> se id > 0, rejeita com <code>'ID inválido'</code> caso contrário.`,
+      starter:`// Missão 27: Promises\nfunction buscarDado(id) {\n  return new Promise((resolve, reject) => {\n    // if (id > 0) resolve(\`Dado encontrado: ID \${id}\`);\n    // else reject('ID inválido');\n  });\n}\nbuscarDado(5).then(m => console.log(m)).catch(e => console.log(e));\nbuscarDado(-1).then(m => console.log(m)).catch(e => console.log(e));\n`,
+      expected:"Dado encontrado: ID 5\nID inválido",
+      hint:"if (id > 0) { resolve(`Dado encontrado: ID ${id}`); } else { reject('ID inválido'); }",
+      validate:(out)=> out.includes("Dado encontrado: ID 5") && out.includes("ID inválido")
+    },
+    {
+      id:28, title:"Fibonacci Recursivo", difficulty:"advanced", xp:200,
+      description:`Implemente <code>fibonacci(n)</code>: fib(0)=0, fib(1)=1, fib(n)=fib(n-1)+fib(n-2). Imprima os primeiros 8 termos (índices 0–7): 0, 1, 1, 2, 3, 5, 8, 13.`,
+      starter:`// Missão 28: Fibonacci\nfunction fibonacci(n) {\n  // if (n <= 0) return 0;\n  // if (n === 1) return 1;\n  // return fibonacci(n-1) + fibonacci(n-2);\n}\nfor (let i = 0; i < 8; i++) {\n  console.log(fibonacci(i));\n}\n`,
+      expected:"0\n1\n1\n2\n3\n5\n8\n13",
+      hint:"if (n <= 0) return 0; if (n === 1) return 1; return fibonacci(n-1) + fibonacci(n-2);",
+      validate:(out)=> ["0","1","1","2","3","5","8","13"].every(v => out.includes(v))
+    },
+    {
+      id:29, title:"Bubble Sort", difficulty:"advanced", xp:220,
+      description:`Implemente <code>bubbleSort(arr)</code> com dois loops aninhados e troca de adjacentes. Teste com <code>[64,34,25,12,22,11,90]</code> → deve sair ordenado crescente.`,
+      starter:`// Missão 29: Bubble Sort\nfunction bubbleSort(arr) {\n  const a = [...arr]; // cópia do original\n  // for (let i = 0; i < a.length; i++) {\n  //   for (let j = 0; j < a.length-i-1; j++) {\n  //     if (a[j] > a[j+1]) { let tmp=a[j]; a[j]=a[j+1]; a[j+1]=tmp; }\n  //   }\n  // }\n  return a;\n}\nconsole.log(bubbleSort([64, 34, 25, 12, 22, 11, 90]));\n`,
+      expected:"[ 11, 12, 22, 25, 34, 64, 90 ]",
+      hint:"let tmp = a[j]; a[j] = a[j+1]; a[j+1] = tmp; — troca os elementos adjacentes.",
+      validate:(out)=> out.includes("11") && out.includes("90") && out.indexOf("11") < out.indexOf("90")
+    },
+    {
+      id:30, title:"Classes e Herança — Boss Final", difficulty:"advanced", xp:230,
+      description:`Crie classe <code>Animal(nome)</code> com <code>falar()</code> → <code>'[nome] faz algum som'</code>. Crie <code>Cachorro extends Animal</code> sobrescrevendo <code>falar()</code> → <code>'[nome] diz: Au Au!'</code>. Instancie e teste. 🏆`,
+      starter:`// Missão 30: Classes e Herança — BOSS FINAL 🏆\nclass Animal {\n  constructor(nome) {\n    // this.nome = nome;\n  }\n  falar() {\n    // return \`\${this.nome} faz algum som\`;\n  }\n}\n\nclass Cachorro extends Animal {\n  falar() {\n    // return \`\${this.nome} diz: Au Au!\`;\n  }\n}\n\nconst animal = new Animal('Gato');\nconst dog    = new Cachorro('Rex');\nconsole.log(animal.falar());\nconsole.log(dog.falar());\n`,
+      expected:"Gato faz algum som\nRex diz: Au Au!",
+      hint:"class Animal { constructor(nome) { this.nome = nome; } falar() { return `${this.nome} faz algum som`; } }",
+      validate:(out)=> out.includes("Gato faz algum som") && out.includes("Rex diz: Au Au!")
+    }
+  ];
+
+  const ACHIEVEMENTS = [
+    { id:"first",      icon:"🚀", name:"Primeiro Passo",        desc:"Complete seu primeiro desafio",                     check:s=> s.completed.length >= 1 },
+    { id:"hat_trick",  icon:"🎩", name:"Hat Trick",             desc:"Acumule 3 desafios em sequência sem erro",          check:s=> s.streak >= 3 },
+    { id:"grad_begin", icon:"🌱", name:"Iniciante Formado",     desc:"Complete todos os desafios iniciantes",             check:s=> byDiff("beginner").every(c=> s.completed.includes(c.id)) },
+    { id:"lvl3",       icon:"🔥", name:"Pegando Fogo",          desc:"Alcance o nível 3",                                 check:s=> s.level >= 3 },
+    { id:"lvl5",       icon:"⭐", name:"Nível 5",               desc:"Alcance o nível 5",                                 check:s=> s.level >= 5 },
+    { id:"ten",        icon:"🔟", name:"Decatleta",             desc:"Complete 10 desafios",                              check:s=> s.completed.length >= 10 },
+    { id:"halfway",    icon:"🏁", name:"Meio Caminho",          desc:"Complete 15 desafios",                              check:s=> s.completed.length >= 15 },
+    { id:"xp500",      icon:"⚡", name:"Acumulador de XP",      desc:"Acumule 500 XP",                                   check:s=> s.totalXp >= 500 },
+    { id:"xp1000",     icon:"💎", name:"Mestre dos Mil XP",     desc:"Acumule 1000 XP",                                  check:s=> s.totalXp >= 1000 },
+    { id:"xp2000",     icon:"🏆", name:"Elite Coder",           desc:"Acumule 2000 XP",                                  check:s=> s.totalXp >= 2000 },
+    { id:"inter5",     icon:"⚙️", name:"Dev Intermediário",     desc:"Complete 5 desafios intermediários",               check:s=> byDiff("intermediate").filter(c=> s.completed.includes(c.id)).length >= 5 },
+    { id:"adv3",       icon:"🚀", name:"Dev Avançado",          desc:"Complete 3 desafios avançados",                    check:s=> byDiff("advanced").filter(c=> s.completed.includes(c.id)).length >= 3 },
+    { id:"algo3",      icon:"🧠", name:"Mestre dos Algoritmos", desc:"Complete Palíndromo, Fibonacci e Bubble Sort",     check:s=> [26,28,29].every(id=> s.completed.includes(id)) },
+    { id:"boss",       icon:"👑", name:"Boss Derrotado",        desc:"Complete o desafio final: Classes e Herança",      check:s=> s.completed.includes(30) },
+    { id:"all30",      icon:"🌟", name:"Mestre do CodeGame",    desc:"Complete todos os 30 desafios!",                   check:s=> s.completed.length >= 30 },
+  ];
+
+  const LEVELS = [
+    { level:1,  xp:0,    title:"// Iniciante",        emoji:"👾" },
+    { level:2,  xp:150,  title:"// Aprendiz",         emoji:"🌱" },
+    { level:3,  xp:350,  title:"// Desenvolvedor",    emoji:"💻" },
+    { level:4,  xp:650,  title:"// Programador Jr",   emoji:"🔧" },
+    { level:5,  xp:1050, title:"// Programador",      emoji:"⚙️" },
+    { level:6,  xp:1550, title:"// Dev Pleno",        emoji:"🚀" },
+    { level:7,  xp:2200, title:"// Dev Sênior",       emoji:"⭐" },
+    { level:8,  xp:3100, title:"// Tech Lead",        emoji:"🏆" },
+    { level:9,  xp:4200, title:"// Arquiteto de SW",  emoji:"🧠" },
+    { level:10, xp:5500, title:"// Mestre do Código", emoji:"👑" },
+  ];
+
+  const MOCK_PLAYERS = [
+    { name:"NightCoder",    avatar:"🦇", xp:4200, completed:30, color:"#a78bfa" },
+    { name:"ByteQueen",     avatar:"👸", xp:3850, completed:28, color:"#ff4d6d" },
+    { name:"AlgoWizard",    avatar:"🧙", xp:3200, completed:26, color:"#00e5ff" },
+    { name:"PixelHunter",   avatar:"🎯", xp:2900, completed:24, color:"#fbbf24" },
+    { name:"CodeNinja",     avatar:"🥷", xp:2400, completed:22, color:"#10ffb0" },
+    { name:"DeepRecurse",   avatar:"🔄", xp:1950, completed:19, color:"#f97316" },
+    { name:"LambdaLord",    avatar:"λ",  xp:1400, completed:15, color:"#00e5ff" },
+    { name:"VarViper",      avatar:"🐍", xp:1100, completed:12, color:"#10ffb0" },
+    { name:"LoopLizard",    avatar:"🦎", xp:800,  completed:9,  color:"#fbbf24" },
+  ];
+
+  function byDiff(d) { return CHALLENGES.filter(c => c.difficulty === d); }
+
+  return { CHALLENGES, ACHIEVEMENTS, LEVELS, MOCK_PLAYERS, byDiff };
+})();
+
+
+/* ────────────────────────────────────────────────────────────────
+   STORE — centralized state + persistence
+   ──────────────────────────────────────────────────────────────── */
+const Store = (() => {
+  const KEY = "codegame_v31";
+
+  function fresh() {
+    return { xp:0, totalXp:0, level:1, score:0, streak:0, completed:[], achievements:[], currentId:null, playerName:"JOGADOR_01" };
+  }
+
+  let _state = fresh();
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(_state)); } catch(_) {}
+  }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) _state = { ...fresh(), ...JSON.parse(raw) };
+    } catch(_) { _state = fresh(); }
+  }
+
+  function reset() { _state = fresh(); save(); }
+
+  /** Returns a shallow snapshot (arrays cloned) to prevent external mutation */
+  function snap() {
+    return { ..._state, completed:[..._state.completed], achievements:[..._state.achievements] };
+  }
+
+  function patch(u) { Object.assign(_state, u); save(); }
+
+  return { load, save, reset, snap, patch };
+})();
+
+
+/* ────────────────────────────────────────────────────────────────
+   LEVELSYSTEM — XP / level math
+   ──────────────────────────────────────────────────────────────── */
+const LevelSystem = (() => {
+  const { LEVELS } = Data;
+
+  function byLevel(n)    { return LEVELS.find(l => l.level === n) || LEVELS[LEVELS.length-1]; }
+  function nextLevel(n)  { return LEVELS.find(l => l.level === n+1) ?? null; }
+  function fromXp(xp)    { return LEVELS.reduce((lv,l) => xp >= l.xp ? l.level : lv, 1); }
+
+  function progress(totalXp, level) {
+    const cur  = byLevel(level);
+    const next = nextLevel(level);
+    const inLv = totalXp - cur.xp;
+    const need = next ? next.xp - cur.xp : 9999;
+    return { inLv, need, pct: Math.min(100, (inLv / need) * 100) };
+  }
+
+  return { byLevel, nextLevel, fromXp, progress };
+})();
+
+
+/* ────────────────────────────────────────────────────────────────
+   VALIDATION — safe sandbox + smart output checking
+   ──────────────────────────────────────────────────────────────── */
+const Validation = (() => {
+
+  /** Runs user code inside a Function sandbox; intercepts console.log */
+  function sandbox(code) {
+    const logs = [];
+    let error  = null;
+
+    const fakeConsole = {
+      log:  (...a) => logs.push(fmt(a)),
+      error:(...a) => logs.push(fmt(a)),
+      warn: (...a) => logs.push(fmt(a)),
+      info: (...a) => logs.push(fmt(a)),
+    };
+
+    try {
+      // eslint-disable-next-line no-new-func
+      new Function("console", `"use strict";\n${code}`)(fakeConsole);
+    } catch(e) { error = e; }
+
+    return { output: logs.join("\n"), logs, error };
+  }
+
+  /** Formats console.log arguments like Node.js */
+  function fmt(args) { return args.map(fmtVal).join(" "); }
+
+  function fmtVal(v) {
+    if (v === null || v === undefined) return String(v);
+    if (typeof v === "string")  return v;
+    if (typeof v === "boolean" || typeof v === "number") return String(v);
+    if (Array.isArray(v)) return `[ ${v.map(i => typeof i === "string" ? `'${i}'` : fmtVal(i)).join(", ")} ]`;
+    try { return JSON.stringify(v); } catch(_) { return String(v); }
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function validate(ch, output, code) {
+    const passed = ch.validate(output.trim(), code);
+    return { passed };
+  }
+
+  return { sandbox, escHtml, validate };
+})();
+
+
+/* ────────────────────────────────────────────────────────────────
+   EFFECTS — particles, confetti, DOM flash
+   ──────────────────────────────────────────────────────────────── */
+const Effects = (() => {
+  const COLORS = ["#00e5ff","#10ffb0","#a78bfa","#fbbf24","#ff4d6d","#f97316"];
+  let fxLayer;
+
+  function init() { fxLayer = document.getElementById("fx-layer"); }
+
+  function spawnParticles(count = 24) {
+    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    for (let i = 0; i < count; i++) {
+      const p   = document.createElement("div");
+      const ang = (Math.PI*2/count)*i + (Math.random()-0.5)*0.9;
+      const d   = 70 + Math.random()*150;
+      const sz  = 4 + Math.random()*7;
+      const col = COLORS[Math.floor(Math.random()*COLORS.length)];
+      p.className = "particle";
+      Object.assign(p.style, {
+        left:`${cx-sz/2}px`, top:`${cy-sz/2}px`,
+        width:`${sz}px`, height:`${sz}px`,
+        background: col, boxShadow:`0 0 6px ${col}`,
+        "--tx":`${Math.cos(ang)*d}px`, "--ty":`${Math.sin(ang)*d}px`,
+        animationDuration:`${0.55+Math.random()*0.55}s`,
+        animationDelay:`${Math.random()*0.08}s`,
+      });
+      fxLayer.appendChild(p);
+      setTimeout(() => p.remove(), 1300);
+    }
+  }
+
+  function spawnConfetti(count = 65) {
+    for (let i = 0; i < count; i++) {
+      const b = document.createElement("div");
+      b.className = "confetti-bit";
+      const sz  = 5 + Math.random()*9;
+      const rot = Math.random()*720;
+      Object.assign(b.style, {
+        left:`${Math.random()*100}vw`,
+        width:`${sz}px`, height:`${sz}px`,
+        background: COLORS[Math.floor(Math.random()*COLORS.length)],
+        borderRadius: Math.random()>0.5 ? "50%" : "2px",
+        "--rot":`${rot}deg`,
+        animationDuration:`${1.4+Math.random()*2}s`,
+        animationDelay:`${Math.random()*0.8}s`,
+      });
+      fxLayer.appendChild(b);
+      setTimeout(() => b.remove(), 3600);
+    }
+  }
+
+  /** Triggers a brief scale-bounce on a DOM element by ID */
+  function bump(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove("is-bumping");
+    void el.offsetWidth; // reflow to restart animation
+    el.classList.add("is-bumping");
+    setTimeout(() => el.classList.remove("is-bumping"), 400);
+  }
+
+  return { init, spawnParticles, spawnConfetti, bump };
+})();
+
+
+/* ────────────────────────────────────────────────────────────────
+   NOTIFICATIONS — toasts + level-up banner
+   ──────────────────────────────────────────────────────────────── */
+const Notifications = (() => {
+  let stack;
+
+  function init() { stack = document.getElementById("toast-stack"); }
+
+  function toast(icon, title, desc, type = "info") {
+    const el = document.createElement("div");
+    el.className = `toast toast--${type}`;
+    el.innerHTML = `
+      <span class="toast__icon" aria-hidden="true">${icon}</span>
+      <div>
+        <div class="toast__title">${title}</div>
+        <div class="toast__desc">${desc}</div>
+      </div>`;
+    stack.appendChild(el);
+    setTimeout(() => {
+      el.classList.add("is-out");
+      setTimeout(() => el.remove(), 280);
+    }, 3500);
+  }
+
+  function levelUp(level, title) {
+    document.getElementById("levelup-text").textContent = `Nível ${level}: ${title}`;
+    const b = document.getElementById("levelup-banner");
+    b.classList.add("is-visible");
+    setTimeout(() => b.classList.remove("is-visible"), 4000);
+  }
+
+  return { init, toast, levelUp };
+})();
+
+
+/* ────────────────────────────────────────────────────────────────
+   UI — DOM rendering engine (cached refs, DocumentFragments)
+   ──────────────────────────────────────────────────────────────── */
+const UI = (() => {
+  // Cached DOM references — populated once at init
+  const $ = {};
+  let activeTab    = "game";
+  let hintOpen     = false;
+  let activeChalId = null;
+
+  const DIFF_LABEL = { beginner:"Iniciante", intermediate:"Intermediário", advanced:"Avançado" };
+  const SUCCESS_EMOJIS = ["🎉","🚀","⚡","🏆","✨","🔥","💪","🌟","🎯","💎"];
+  const SUCCESS_MSGS   = [
+    "Código correto! Você dominou esse conceito.",
+    "Perfeito! Raciocínio limpo e lógico.",
+    "Incrível! Continue — cada missão te faz mais forte.",
+    "Missão cumprida! XP adicionado ao seu perfil.",
+    "Excelente! Seu código funcionou de primeira.",
+  ];
+  const ERROR_MSGS = [
+    "Quase lá! Compare sua saída com a esperada.",
+    "Não desista — errar é parte do aprendizado.",
+    "Revise a lógica ou use a dica se precisar.",
+    "O bug está perto. Analise o console com calma.",
+  ];
+
+  function init() {
+    const ids = [
+      "hud-xp","hud-score","hud-level",
+      "player-emoji","player-name","player-title",
+      "xp-fill","xp-fraction","progress-fill","progress-val",
+      "challenge-list",
+      "st-done","st-streak","st-level","st-ach",
+      "welcome-pane","mission-detail",
+      "mission-num","mission-title","mission-badges","mission-desc","mission-expected",
+      "hint-toggle","hint-body","hint-text","hint-label",
+      "editor-filename","file-dot",
+      "code-editor","line-numbers",
+      "run-btn","console-dot","console-body",
+      "feedback-overlay","feedback-modal",
+      "fb-emoji","fb-title","fb-msg","fb-xp","fb-xp-val","fb-cta",
+      "game-view","ranking-view","achievements-view",
+      "ranking-list","achievements-grid",
+    ];
+    ids.forEach(id => { $[id] = document.getElementById(id); });
+  }
+
+  /* ── Full re-render triggered after any state mutation ── */
+  function render() {
+    const s = Store.snap();
+    const { inLv, need, pct } = LevelSystem.progress(s.totalXp, s.level);
+    const lv    = LevelSystem.byLevel(s.level);
+    const nextLv = LevelSystem.nextLevel(s.level);
+    const total  = Data.CHALLENGES.length;
+    const pgPct  = Math.round((s.completed.length / total) * 100);
+
+    // Header HUD
+    $["hud-xp"].textContent    = s.totalXp.toLocaleString("pt-BR");
+    $["hud-score"].textContent = s.score.toLocaleString("pt-BR");
+    $["hud-level"].textContent = `⭐ Nível ${s.level}`;
+
+    // Sidebar player
+    $["player-emoji"].textContent = lv.emoji;
+    $["player-name"].textContent  = s.playerName || "JOGADOR_01";
+    $["player-title"].textContent = lv.title;
+    $["xp-fill"].style.width = `${pct}%`;
+    $["xp-fraction"].textContent = nextLv ? `${inLv} / ${need}` : "NÍVEL MÁXIMO";
+
+    // Progress bar
+    $["progress-fill"].style.width = `${pgPct}%`;
+    $["progress-val"].textContent  = `${s.completed.length} / ${total}`;
+
+    // Stat tiles
+    $["st-done"].textContent   = s.completed.length;
+    $["st-streak"].textContent = s.streak;
+    $["st-level"].textContent  = s.level;
+    $["st-ach"].textContent    = s.achievements.length;
+
+    // Challenge list (batched)
+    _renderChallengeList(s);
+  }
+
+  /* Challenge list — one DocumentFragment, zero intermediate reflows */
+  function _renderChallengeList(s) {
+    const frag = document.createDocumentFragment();
+    const CFG  = {
+      beginner:     { label:"Iniciante",     cls:"diff-dot--beginner" },
+      intermediate: { label:"Intermediário", cls:"diff-dot--intermediate" },
+      advanced:     { label:"Avançado",      cls:"diff-dot--advanced" },
+    };
+    let lastDiff = null;
+
+    Data.CHALLENGES.forEach(ch => {
+      if (ch.difficulty !== lastDiff) {
+        lastDiff = ch.difficulty;
+        const g = document.createElement("div");
+        g.className = "challenge-group-label";
+        g.innerHTML = `<span class="diff-dot ${CFG[ch.difficulty].cls}" aria-hidden="true"></span>${CFG[ch.difficulty].label}`;
+        frag.appendChild(g);
+      }
+
+      const done   = s.completed.includes(ch.id);
+      const active = ch.id === activeChalId;
+      const icon   = done ? "✅" : ch.difficulty === "beginner" ? "📘" : ch.difficulty === "intermediate" ? "📙" : "📕";
+
+      const item = document.createElement("div");
+      item.className = `challenge-item${done?" challenge-item--done":""}${active?" challenge-item--active":""}`;
+      item.setAttribute("role", "button");
+      item.setAttribute("tabindex", "0");
+      item.setAttribute("aria-label", `${ch.title} — ${DIFF_LABEL[ch.difficulty]}, +${ch.xp} XP${done?" (concluído)":""}`);
+      item.innerHTML = `
+        <span class="ci-icon" aria-hidden="true">${icon}</span>
+        <div class="ci-body">
+          <div class="ci-title">${ch.id}. ${ch.title}</div>
+          <div class="ci-meta">
+            <span class="ci-diff">${ch.difficulty}</span>
+            <span class="ci-xp">+${ch.xp}xp</span>
+          </div>
+        </div>`;
+
+      const id = ch.id;
+      item.addEventListener("click",   ()  => GameController.selectChallenge(id));
+      item.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); GameController.selectChallenge(id); } });
+      frag.appendChild(item);
+    });
+
+    $["challenge-list"].innerHTML = "";
+    $["challenge-list"].appendChild(frag);
+  }
+
+  /* Load mission detail panel */
+  function loadMission(ch) {
+    activeChalId = ch.id;
+    hintOpen = false;
+
+    $["welcome-pane"].style.display  = "none";
+    $["mission-detail"].style.display = "none";
+    // Force reflow so animation re-triggers
+    void $["mission-detail"].offsetWidth;
+    $["mission-detail"].classList.add("is-visible");
+
+    $["mission-num"].textContent   = `#${String(ch.id).padStart(2,"0")}`;
+    $["mission-title"].textContent = ch.title;
+
+    const s    = Store.snap();
+    const done = s.completed.includes(ch.id);
+    $["mission-badges"].innerHTML = `
+      <span class="badge badge--${ch.difficulty}">${DIFF_LABEL[ch.difficulty]}</span>
+      <span class="badge badge--xp">+${ch.xp} XP</span>
+      ${done ? '<span class="badge badge--done">✓ Concluído</span>' : ""}`;
+
+    $["mission-desc"].innerHTML    = ch.description;
+    $["mission-expected"].textContent = ch.expected;
+
+    $["hint-body"].classList.remove("is-open");
+    $["hint-toggle"].classList.remove("is-open");
+    $["hint-toggle"].setAttribute("aria-expanded","false");
+    $["hint-label"].textContent = "Ver Dica";
+    $["hint-text"].textContent  = ch.hint;
+
+    $["editor-filename"].textContent = `missao_${String(ch.id).padStart(2,"0")}.js`;
+    $["file-dot"].className = "file-dot";
+  }
+
+  /* Line numbers — deferred via rAF to avoid layout jank */
+  function updateLineNums() {
+    requestAnimationFrame(() => {
+      const lines = ($["code-editor"].value.match(/\n/g) || []).length + 1;
+      if (parseInt($["line-numbers"].dataset.n || "0") === lines) return;
+      $["line-numbers"].dataset.n = lines;
+      $["line-numbers"].innerHTML = Array.from({length:lines},(_,i)=>i+1).join("<br>");
+    });
+  }
+
+  function toggleHint() {
+    hintOpen = !hintOpen;
+    $["hint-body"].classList.toggle("is-open", hintOpen);
+    $["hint-toggle"].classList.toggle("is-open", hintOpen);
+    $["hint-toggle"].setAttribute("aria-expanded", hintOpen ? "true" : "false");
+    $["hint-label"].textContent = hintOpen ? "Ocultar Dica" : "Ver Dica";
+  }
+
+  /* Console helpers */
+  const PFX = { neutral:"›", success:"✓", error:"✗", info:"ℹ", warn:"⚠" };
+
+  function appendConsole(text, type = "neutral") {
+    const line = document.createElement("div");
+    line.className = `cline cline--${type}`;
+    line.innerHTML = `<span class="cline__pfx" aria-hidden="true">${PFX[type]||"›"}</span><span class="cline__txt">${Validation.escHtml(text)}</span>`;
+    $["console-body"].appendChild(line);
+    $["console-body"].scrollTop = $["console-body"].scrollHeight;
+  }
+
+  function clearConsole() { $["console-body"].innerHTML = ""; setConsoleDot(""); }
+
+  function setConsoleDot(state) {
+    $["console-dot"].className = `console__dot${state ? ` console__dot--${state}` : ""}`;
+  }
+
+  /* Feedback modal */
+  function showFeedback(type, opts = {}) {
+    const modal = $["feedback-modal"];
+    modal.className = `feedback-modal${type !== "already-done" ? ` feedback-modal--${type}` : ""}`;
+
+    if (type === "success") {
+      $["fb-emoji"].textContent = SUCCESS_EMOJIS[Math.floor(Math.random()*SUCCESS_EMOJIS.length)];
+      $["fb-title"].textContent = "DESAFIO CONCLUÍDO!";
+      $["fb-msg"].textContent   = SUCCESS_MSGS[Math.floor(Math.random()*SUCCESS_MSGS.length)];
+      $["fb-xp"].style.display  = "inline-flex";
+      $["fb-xp-val"].textContent = `+${opts.xp} XP`;
+      $["fb-cta"].textContent   = "Próxima Missão →";
+    } else if (type === "error") {
+      $["fb-emoji"].textContent = "😤";
+      $["fb-title"].textContent = "CÓDIGO COM ERRO";
+      $["fb-msg"].textContent   = ERROR_MSGS[Math.floor(Math.random()*ERROR_MSGS.length)];
+      $["fb-xp"].style.display  = "none";
+      $["fb-cta"].textContent   = "Tentar Novamente";
+    } else {
+      $["fb-emoji"].textContent = "🔄";
+      $["fb-title"].textContent = "JÁ CONCLUÍDO!";
+      $["fb-msg"].textContent   = "Você já completou este desafio. Avance para ganhar mais XP!";
+      $["fb-xp"].style.display  = "none";
+      $["fb-cta"].textContent   = "Continuar";
+    }
+
+    $["feedback-overlay"].classList.add("is-visible");
+    setTimeout(() => $["fb-cta"].focus(), 400);
+  }
+
+  function closeFeedback() {
+    $["feedback-overlay"].classList.remove("is-visible");
+    // Auto-advance to next challenge on success
+    if (activeChalId) {
+      const s   = Store.snap();
+      const idx = Data.CHALLENGES.findIndex(c => c.id === activeChalId);
+      const nxt = Data.CHALLENGES[idx + 1];
+      if (nxt && s.completed.includes(activeChalId)) {
+        setTimeout(() => GameController.selectChallenge(nxt.id), 350);
+      }
+    }
+  }
+
+  function switchTab(tab, btn) {
+    if (activeTab === tab) return;
+    activeTab = tab;
+    document.querySelectorAll(".tab-btn").forEach(b => { b.classList.remove("is-active"); b.setAttribute("aria-selected","false"); });
+    btn.classList.add("is-active");
+    btn.setAttribute("aria-selected","true");
+
+    $["game-view"].style.display         = tab === "game"         ? "flex"  : "none";
+    $["ranking-view"].style.display      = tab === "ranking"      ? "block" : "none";
+    $["achievements-view"].style.display = tab === "achievements" ? "block" : "none";
+
+    if (tab === "ranking")      _renderRanking();
+    if (tab === "achievements") _renderAchievements();
+  }
+
+  function _renderRanking() {
+    const s = Store.snap();
+    const me = { name:"Você", avatar:LevelSystem.byLevel(s.level).emoji, xp:s.totalXp, completed:s.completed.length, color:"#00e5ff", isMe:true };
+    const players = [...Data.MOCK_PLAYERS, me].sort((a,b) => b.xp - a.xp);
+    const frag = document.createDocumentFragment();
+
+    players.forEach((p, i) => {
+      const rank = i + 1;
+      const plv  = LevelSystem.fromXp(p.xp);
+      const ld   = LevelSystem.byLevel(plv);
+      const pos  = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `${rank}`;
+      const posC = rank === 1 ? "rk-pos--1" : rank === 2 ? "rk-pos--2" : rank === 3 ? "rk-pos--3" : "";
+      const bc   = rank === 1 ? "ranking-row--gold" : rank === 2 ? "ranking-row--silver" : rank === 3 ? "ranking-row--bronze" : "ranking-row--other";
+
+      const row = document.createElement("div");
+      row.className = `ranking-row ${bc}${p.isMe ? " ranking-row--me" : ""}`;
+      row.innerHTML = `
+        <div class="rk-pos ${posC}" aria-label="Posição ${rank}">${pos}</div>
+        <div class="rk-avatar" style="background:linear-gradient(135deg,${p.color}16,${p.color}32);border-color:${p.color}32" aria-hidden="true">${p.avatar}</div>
+        <div class="rk-info">
+          <div class="rk-name${p.isMe?" rk-name--me":""}">${p.name}${p.isMe?" (Você)":""}</div>
+          <div class="rk-sub">${ld.title}</div>
+        </div>
+        <div class="rk-metrics">
+          <div class="rk-metric"><div class="rk-metric__val" style="color:var(--purple)">${plv}</div><div class="rk-metric__lbl">Nível</div></div>
+          <div class="rk-metric"><div class="rk-metric__val">${p.xp.toLocaleString("pt-BR")}</div><div class="rk-metric__lbl">XP</div></div>
+          <div class="rk-metric"><div class="rk-metric__val" style="color:var(--green)">${p.completed}</div><div class="rk-metric__lbl">Missões</div></div>
+        </div>`;
+      frag.appendChild(row);
+    });
+
+    $["ranking-list"].innerHTML = "";
+    $["ranking-list"].appendChild(frag);
+  }
+
+  function _renderAchievements() {
+    const s    = Store.snap();
+    const sorted = [...Data.ACHIEVEMENTS].sort((a,b) => {
+      const au = s.achievements.includes(a.id) ? 1 : 0;
+      const bu = s.achievements.includes(b.id) ? 1 : 0;
+      return bu - au;
+    });
+    const frag = document.createDocumentFragment();
+
+    sorted.forEach(ach => {
+      const unlocked = s.achievements.includes(ach.id);
+      const card = document.createElement("div");
+      card.className = `ach-card ${unlocked ? "is-unlocked" : "is-locked"}`;
+      card.innerHTML = `
+        <div class="ach-card__bar" aria-hidden="true"></div>
+        <span class="ach-card__icon" aria-hidden="true">${ach.icon}</span>
+        <div class="ach-card__name">${ach.name}</div>
+        <div class="ach-card__desc">${ach.desc}</div>
+        <div class="ach-card__status ach-card__status--${unlocked?"earned":"locked"}">${unlocked?"✓ CONQUISTADO":"🔒 BLOQUEADO"}</div>`;
+      frag.appendChild(card);
+    });
+
+    $["achievements-grid"].innerHTML = "";
+    $["achievements-grid"].appendChild(frag);
+  }
+
+  return { init, render, loadMission, updateLineNums, toggleHint, appendConsole, clearConsole, setConsoleDot, showFeedback, closeFeedback, switchTab };
+})();
+
+
+/* ────────────────────────────────────────────────────────────────
+   GAMECONTROLLER — orchestrates all game actions
+   ──────────────────────────────────────────────────────────────── */
+const GameController = (() => {
+  let currentChallenge = null;
+  let running          = false;
+
+  function selectChallenge(id) {
+    const ch = Data.CHALLENGES.find(c => c.id === id);
+    if (!ch) return;
+
+    currentChallenge = ch;
+    Store.patch({ currentId: id });
+
+    UI.loadMission(ch);
+    UI.clearConsole();
+    UI.appendConsole(`Missão ${id} carregada: "${ch.title}"`, "info");
+    UI.appendConsole("Escreva seu código e pressione Executar (Ctrl+Enter).", "info");
+    UI.render();
+
+    const editor = document.getElementById("code-editor");
+    editor.value = ch.starter;
+    editor.focus();
+    UI.updateLineNums();
+
+    // Close sidebar on mobile after selection
+    document.getElementById("sidebar").classList.remove("is-open");
+    document.getElementById("sidebar-toggle")?.setAttribute("aria-expanded", "false");
+
+    requestAnimationFrame(() => {
+      document.querySelector(".challenge-item--active")?.scrollIntoView({ block:"nearest", behavior:"smooth" });
+    });
+  }
+
+  function runCode() {
+    if (!currentChallenge) { UI.appendConsole("Selecione uma missão primeiro!", "error"); return; }
+    if (running) return;
+
+    running = true;
+    const btn = document.getElementById("run-btn");
+    btn.classList.add("is-running");
+    btn.innerHTML = '<span aria-hidden="true">⏳</span> Executando...';
+    UI.setConsoleDot("running");
+    UI.clearConsole();
+
+    const code = document.getElementById("code-editor").value;
+
+    // Slight delay gives the UI time to update the button state
+    setTimeout(() => {
+      const { output, logs, error } = Validation.sandbox(code);
+
+      if (error) {
+        UI.appendConsole(`Erro de sintaxe: ${error.message}`, "error");
+        UI.setConsoleDot("error");
+        _fail();
+      } else {
+        if (logs.length === 0) {
+          UI.appendConsole("(nenhum output — use console.log() para imprimir valores)", "warn");
+        } else {
+          logs.forEach(l => UI.appendConsole(l, "neutral"));
+        }
+
+        const { passed } = Validation.validate(currentChallenge, output, code);
+
+        if (passed) {
+          UI.setConsoleDot("success");
+          UI.appendConsole("✓ Desafio concluído com sucesso!", "success");
+          _succeed();
+        } else {
+          UI.setConsoleDot("error");
+          UI.appendConsole("✗ Saída incorreta. Verifique a lógica.", "error");
+          UI.appendConsole(`  Esperado: "${currentChallenge.expected.split("\n")[0]}${currentChallenge.expected.includes("\n") ? "..." : ""}"`, "warn");
+          _fail();
+        }
+      }
+
+      btn.classList.remove("is-running");
+      btn.innerHTML = '<span aria-hidden="true">▶</span> Executar';
+      running = false;
+    }, 160);
+  }
+
+  function _succeed() {
+    const s       = Store.snap();
+    const isFirst = !s.completed.includes(currentChallenge.id);
+
+    if (!isFirst) { UI.showFeedback("already-done"); return; }
+
+    const newTotalXp   = s.totalXp + currentChallenge.xp;
+    const newLevel     = LevelSystem.fromXp(newTotalXp);
+    const newCompleted = [...s.completed, currentChallenge.id];
+    const newStreak    = s.streak + 1;
+
+    Store.patch({
+      completed: newCompleted,
+      totalXp:   newTotalXp,
+      xp:        s.xp + currentChallenge.xp,
+      score:     s.score + currentChallenge.xp,
+      streak:    newStreak,
+      level:     newLevel,
+    });
+
+    const newAchs = _checkAchievements();
+
+    UI.render();
+    Effects.spawnParticles();
+    Effects.bump("hud-xp");
+    UI.showFeedback("success", { xp: currentChallenge.xp });
+
+    if (newLevel > s.level) {
+      const ld = LevelSystem.byLevel(newLevel);
+      setTimeout(() => { Notifications.levelUp(newLevel, ld.title); Effects.spawnConfetti(); }, 450);
+      Notifications.toast("🎉", "Level Up!", `Nível ${newLevel}: ${ld.title}`, "success");
+    }
+
+    newAchs.forEach((ach, i) => {
+      setTimeout(() => Notifications.toast(ach.icon, "Conquista Desbloqueada!", ach.name, "achievement"), 700 + i*550);
+    });
+  }
+
+  function _fail() {
+    Store.patch({ streak: 0 });
+    UI.render();
+    setTimeout(() => UI.showFeedback("error"), 280);
+  }
+
+  function _checkAchievements() {
+    const s   = Store.snap();
+    const neu = Data.ACHIEVEMENTS.filter(a => !s.achievements.includes(a.id) && a.check(s));
+    if (neu.length) Store.patch({ achievements: [...s.achievements, ...neu.map(a => a.id)] });
+    return neu;
+  }
+
+  function resetCode() {
+    if (!currentChallenge) return;
+    document.getElementById("code-editor").value = currentChallenge.starter;
+    UI.updateLineNums();
+    UI.clearConsole();
+    UI.appendConsole("Código resetado para o estado inicial.", "info");
+    document.getElementById("file-dot").className = "file-dot";
+  }
+
+  function confirmReset() {
+    if (!confirm("⚠️ Resetar TODO o progresso?\n\nEsta ação não pode ser desfeita.")) return;
+
+    Store.reset();
+    currentChallenge = null;
+
+    const editor = document.getElementById("code-editor");
+    editor.value  = "";
+    UI.updateLineNums();
+    UI.clearConsole();
+
+    document.getElementById("welcome-pane").style.display  = "flex";
+    const md = document.getElementById("mission-detail");
+    md.style.display  = "none";
+    md.classList.remove("is-visible");
+    document.getElementById("editor-filename").textContent = "selecione_uma_missao.js";
+    document.getElementById("file-dot").className = "file-dot";
+
+    UI.render();
+    Notifications.toast("🔄", "Progresso Resetado", "Comece do zero! Boa sorte.", "info");
+  }
+
+  return { selectChallenge, runCode, resetCode, confirmReset };
+})();
+
+
+/* ────────────────────────────────────────────────────────────────
+   EVENTMANAGER — centralized listeners
+   ──────────────────────────────────────────────────────────────── */
+const EventManager = (() => {
+  function init() {
+    const editor = document.getElementById("code-editor");
+
+    editor.addEventListener("keydown", e => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const { selectionStart:s, selectionEnd:en } = editor;
+        editor.value = editor.value.slice(0, s) + "  " + editor.value.slice(en);
+        editor.selectionStart = editor.selectionEnd = s + 2;
+        UI.updateLineNums();
+      }
+      if (e.ctrlKey && e.key === "Enter") { e.preventDefault(); GameController.runCode(); }
+    });
+
+    editor.addEventListener("input", () => {
+      UI.updateLineNums();
+      document.getElementById("file-dot").className = "file-dot"; // unsaved state indicator
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        const ov = document.getElementById("feedback-overlay");
+        if (ov.classList.contains("is-visible")) UI.closeFeedback();
+      }
+    });
+
+    document.getElementById("feedback-overlay").addEventListener("click", e => {
+      if (e.target === document.getElementById("feedback-overlay")) UI.closeFeedback();
+    });
+  }
+
+  return { init };
+})();
+
+
+/* ────────────────────────────────────────────────────────────────
+   APP — bootstrap, splash, sidebar toggle
+   ──────────────────────────────────────────────────────────────── */
+const App = (() => {
+  /** Called by splash CTA button — fades splash, reveals app */
+  function launch() {
+    const splash = document.getElementById("splash");
+    const app    = document.getElementById("app");
+
+    splash.classList.add("is-hiding");
+    app.removeAttribute("aria-hidden");
+
+    setTimeout(() => {
+      splash.style.display = "none";
+      app.classList.add("is-ready");
+    }, 520);
+  }
+
+  function toggleSidebar() {
+    const sb  = document.getElementById("sidebar");
+    const btn = document.getElementById("sidebar-toggle");
+    const open = sb.classList.toggle("is-open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function promptRename() {
+    const s = Store.snap();
+    const name = window.prompt("Digite seu nome de jogador:", s.playerName || "JOGADOR_01");
+    if (name && name.trim()) {
+      const clean = name.trim().slice(0, 20).toUpperCase();
+      Store.patch({ playerName: clean });
+      UI.render();
+    }
+  }
+
+  function init() {
+    Store.load();
+
+    UI.init();
+    Effects.init();
+    Notifications.init();
+    EventManager.init();
+    UI.render();
+    UI.updateLineNums();
+
+    const s = Store.snap();
+
+    // Restore last active challenge
+    if (s.currentId) GameController.selectChallenge(s.currentId);
+
+    // Show splash or auto-launch returning users
+    if (s.completed.length > 0) {
+      // Returning user: launch directly with welcome back toast
+      launch();
+      const lv = LevelSystem.byLevel(s.level);
+      setTimeout(() => Notifications.toast(lv.emoji, "Bem-vindo de volta!", `Nível ${s.level} • ${s.completed.length} missões completas`, "info"), 800);
+    } else {
+      // New user sees the splash screen
+      // (nothing to do — splash is shown by default)
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+  return { launch, toggleSidebar, promptRename };
+})();
+
+/* Expose for inline onclick handlers */
+window.UI             = UI;
+window.App            = App;
+window.GameController = GameController;
+</script>
+</body>
+</html>
